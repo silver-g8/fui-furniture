@@ -1,0 +1,795 @@
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/DashboardCard.vue:54:42
+    52 | import { computed } from 'vue';
+    53 | import { date } from 'quasar';
+  > 54 | import type { DashboardWidgetSize } from '@/types/dashboard';
+       |                                          ^^^^^^^^^^^^^^^^^^^
+    55 |
+    56 | const sizeClassMap: Record<DashboardWidgetSize, string> = {
+    57 |   small: 'dashboard-card--small',
+[vue-tsc] Argument of type '{ loading: false; error: null; icon: undefined; size: string; lastUpdated: null; }' is not assignable to parameter of type 'InferDefaults<LooseRequired<__VLS_Props>>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties. Types of property 'icon' are incompatible. Type 'undefined' is not assignable to type 'string | ((props: LooseRequired<__VLS_Props>) => string)'.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/DashboardCard.vue:72:3
+    70 |     lastUpdated?: Date | null;
+    71 |   }>(),
+  > 72 |   {
+       |   ^
+  > 73 |     loading: false,
+       | ^^^^^^^^^^^^^^^^^^^
+  > 74 |     error: null,
+       | ^^^^^^^^^^^^^^^^^^^
+  > 75 |     icon: undefined,
+       | ^^^^^^^^^^^^^^^^^^^
+  > 76 |     size: 'medium',
+       | ^^^^^^^^^^^^^^^^^^^
+  > 77 |     lastUpdated: null,
+       | ^^^^^^^^^^^^^^^^^^^
+  > 78 |   },
+       | ^^^^
+    79 | );
+    80 |
+    81 | const cardClass = computed(() => ['dashboard-card', sizeClassMap[props.size]]);
+[vue-tsc] Argument of type '{ title: string; icon: string | undefined; size: any; loading: boolean; error: string | null; lastUpdated: Date | null; }' is not assignable to parameter of type '{ readonly title: string; readonly loading?: boolean; readonly error?: string | null; readonly icon?: string; readonly size?: any; readonly lastUpdated?: Date | null; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Record<...>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties. Type '{ title: string; icon: string | undefined; size: any; loading: boolean; error: string | null; lastUpdated: Date | null; }' is not assignable to type '{ readonly title: string; readonly loading?: boolean; readonly error?: string | null; readonly icon?: string; readonly size?: any; readonly lastUpdated?: Date | null; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties. Types of property 'icon' are incompatible. Type 'string | undefined' is not assignable to type 'string'. Type 'undefined' is not assignable to type 'string'.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/DashboardWidget.vue:2:2
+    1 | <template>
+  > 2 | <DashboardCard
+      |  ^^^^^^^^^^^^^
+    3 |   :title="translatedTitle"
+    4 |   :icon="icon"
+    5 |   :size="widget.size"
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/DashboardWidget.vue:49:38
+    47 | import ListWidget from './widgets/ListWidget.vue';
+    48 | import RawWidget from './widgets/RawWidget.vue';
+  > 49 | import type { DashboardWidget } from '@/types/dashboard';
+       |                                      ^^^^^^^^^^^^^^^^^^^
+    50 | import type {
+    51 |   DashboardMetricData,
+    52 |   DashboardChartData,
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/DashboardWidget.vue:55:8
+    53 |   DashboardTableData,
+    54 |   DashboardListData,
+  > 55 | } from '@/types/dashboard';
+       |        ^^^^^^^^^^^^^^^^^^^
+    56 |
+    57 | const props = defineProps<{
+    58 |   widget: DashboardWidget;
+[vue-tsc] Parameter 'dataset' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/DashboardWidget.vue:115:36
+    113 |     case 'chart': {
+    114 |       const chart = data as DashboardChartData;
+  > 115 |       return chart.datasets?.some((dataset) => Array.isArray(dataset.data) && dataset.data.length > 0) ?? false;
+        |                                    ^^^^^^^
+    116 |     }
+    117 |     case 'table': {
+    118 |       const table = data as DashboardTableData;
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/widgets/ChartWidgetSummary.vue:27:41
+    25 | import { computed } from 'vue';
+    26 | import { useI18n } from 'vue-i18n';
+  > 27 | import type { DashboardChartData } from '@/types/dashboard';
+       |                                         ^^^^^^^^^^^^^^^^^^^
+    28 |
+    29 | const props = defineProps<{
+    30 |   data?: DashboardChartData;
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/widgets/ListWidget.vue:29:40
+    27 | import { computed } from 'vue';
+    28 | import { useI18n } from 'vue-i18n';
+  > 29 | import type { DashboardListData } from '@/types/dashboard';
+       |                                        ^^^^^^^^^^^^^^^^^^^
+    30 |
+    31 | const props = defineProps<{
+    32 |   data?: DashboardListData;
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/widgets/MetricWidget.vue:23:42
+    21 | <script setup lang="ts">
+    22 | import { computed } from 'vue';
+  > 23 | import type { DashboardMetricData } from '@/types/dashboard';
+       |                                          ^^^^^^^^^^^^^^^^^^^
+    24 |
+    25 | const props = defineProps<{
+    26 |   data?: DashboardMetricData;
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/dashboard/widgets/TableWidget.vue:28:41
+    26 | import { computed } from 'vue';
+    27 | import { useI18n } from 'vue-i18n';
+  > 28 | import type { DashboardTableData } from '@/types/dashboard';
+       |                                         ^^^^^^^^^^^^^^^^^^^
+    29 |
+    30 | const props = defineProps<{
+    31 |   data?: DashboardTableData;
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/menu/MenuCategory.vue:38:35
+    36 | import { computed } from 'vue';
+    37 | import { useI18n } from 'vue-i18n';
+  > 38 | import type { MenuCategory } from '@/types/menu';
+       |                                   ^^^^^^^^^^^^^^
+    39 | import { useMenuStore } from '@/stores/menu-store';
+    40 | import MenuItem from './MenuItem.vue';
+    41 |
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/menu/MenuCategory.vue:39:30
+    37 | import { useI18n } from 'vue-i18n';
+    38 | import type { MenuCategory } from '@/types/menu';
+  > 39 | import { useMenuStore } from '@/stores/menu-store';
+       |                              ^^^^^^^^^^^^^^^^^^^^^
+    40 | import MenuItem from './MenuItem.vue';
+    41 |
+    42 | defineOptions({
+[vue-tsc] Type '(value: HTMLElement | ItemComponentInstance | null) => void' is not assignable to type 'VNodeRef'. Type '(value: HTMLElement | ItemComponentInstance | null) => void' is not assignable to type '(ref: Element | ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions>, ... 4 more ..., any> | null, refs: Record<...>) => void'. Types of parameters 'value' and 'ref' are incompatible. Type 'Element | ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions>, ... 4 more ..., any> | null' is not assignable to type 'HTMLElement | ItemComponentInstance | null'. Type 'Element' is not assignable to type 'HTMLElement | ItemComponentInstance | null'. Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 129 more.
+/Users/silve/project/roiet/fui-furniture/src/components/menu/MenuItem.vue:4:8
+    2 |   <div class="menu-item" :data-depth="depth">
+    3 |     <q-item
+  > 4 |       :ref="setItemRef"
+      |        ^^^
+    5 |       :data-testid="'menu-item'"
+    6 |       :data-menu-id="item.id"
+    7 |       data-menu-focusable="true"
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/menu/MenuItem.vue:80:47
+    78 | import { useI18n } from 'vue-i18n';
+    79 | import { useQuasar, type QVueGlobals } from 'quasar';
+  > 80 | import type { MenuItem as MenuItemType } from '@/types/menu';
+       |                                               ^^^^^^^^^^^^^^
+    81 | import { useMenuStore } from '@/stores/menu-store';
+    82 | import { useNavigationStore } from '@/stores/navigation-store';
+    83 |
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/menu/MenuItem.vue:81:30
+    79 | import { useQuasar, type QVueGlobals } from 'quasar';
+    80 | import type { MenuItem as MenuItemType } from '@/types/menu';
+  > 81 | import { useMenuStore } from '@/stores/menu-store';
+       |                              ^^^^^^^^^^^^^^^^^^^^^
+    82 | import { useNavigationStore } from '@/stores/navigation-store';
+    83 |
+    84 | defineOptions({
+[vue-tsc] Cannot find module '@/stores/navigation-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/menu/MenuItem.vue:82:36
+    80 | import type { MenuItem as MenuItemType } from '@/types/menu';
+    81 | import { useMenuStore } from '@/stores/menu-store';
+  > 82 | import { useNavigationStore } from '@/stores/navigation-store';
+       |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    83 |
+    84 | defineOptions({
+    85 |   name: 'MenuItem',
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/components/menu/SideMenu.vue:35:30
+    33 | import { useRoute } from 'vue-router';
+    34 | import MenuCategory from './MenuCategory.vue';
+  > 35 | import { useMenuStore } from '@/stores/menu-store';
+       |                              ^^^^^^^^^^^^^^^^^^^^^
+    36 |
+    37 | const menuStore = useMenuStore();
+    38 | const { t } = useI18n();
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/composables/useMenu.ts:1:60
+  > 1 | import type { MenuCategory, MenuItem, MenuStructure } from '@/types/menu';
+      |                                                            ^^^^^^^^^^^^^^
+    2 | import { menuStructure as defaultMenuStructure } from '@/config/menu';
+    3 |
+    4 | type MenuNode = MenuCategory | MenuItem;
+[vue-tsc] Cannot find module '@/config/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/composables/useMenu.ts:2:55
+    1 | import type { MenuCategory, MenuItem, MenuStructure } from '@/types/menu';
+  > 2 | import { menuStructure as defaultMenuStructure } from '@/config/menu';
+      |                                                       ^^^^^^^^^^^^^^^
+    3 |
+    4 | type MenuNode = MenuCategory | MenuItem;
+    5 |
+[vue-tsc] Parameter 'category' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/composables/useMenu.ts:18:22
+    16 |   };
+    17 |
+  > 18 |   structure.forEach((category) => {
+       |                      ^^^^^^^^
+    19 |     traverse(category.items);
+    20 |   });
+    21 |
+[vue-tsc] Parameter 'cat' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/composables/useMenu.ts:71:36
+    69 |
+    70 | function findNodeById(structure: MenuStructure, id: string): MenuNode | null {
+  > 71 |   const category = structure.find((cat) => cat.id === id);
+       |                                    ^^^
+    72 |   if (category) {
+    73 |     return category;
+    74 |   }
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/config/menu.ts:1:36
+  > 1 | import type { MenuStructure } from '@/types/menu';
+      |                                    ^^^^^^^^^^^^^^
+    2 |
+    3 | export const menuStructure: MenuStructure = [
+    4 |   {
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/layouts/MainLayout.vue:30:30
+    28 | import { useQuasar, type QVueGlobals } from 'quasar';
+    29 | import SideMenu from '@/components/menu/SideMenu.vue';
+  > 30 | import { useMenuStore } from '@/stores/menu-store';
+       |                              ^^^^^^^^^^^^^^^^^^^^^
+    31 |
+    32 | const menuStore = useMenuStore();
+    33 |
+[vue-tsc] Cannot find module '@/stores/dashboard-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/pages/Dashboard.vue:74:35
+    72 | import { date } from 'quasar';
+    73 | import DashboardWidget from '@/components/dashboard/DashboardWidget.vue';
+  > 74 | import { useDashboardStore } from '@/stores/dashboard-store';
+       |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    75 | import type { DashboardWidget as DashboardWidgetType, DashboardWidgetSize } from '@/types/dashboard';
+    76 |
+    77 | const dashboard = useDashboardStore();
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/pages/Dashboard.vue:75:82
+    73 | import DashboardWidget from '@/components/dashboard/DashboardWidget.vue';
+    74 | import { useDashboardStore } from '@/stores/dashboard-store';
+  > 75 | import type { DashboardWidget as DashboardWidgetType, DashboardWidgetSize } from '@/types/dashboard';
+       |                                                                                  ^^^^^^^^^^^^^^^^^^^
+    76 |
+    77 | const dashboard = useDashboardStore();
+    78 | const { t } = useI18n();
+[vue-tsc] Cannot find module '@/composables/useMenu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/pages/menu/MenuPlaceholder.vue:36:25
+    34 | import { computed } from 'vue';
+    35 | import { useRoute } from 'vue-router';
+  > 36 | import { useMenu } from '@/composables/useMenu';
+       |                         ^^^^^^^^^^^^^^^^^^^^^^^
+    37 | import { menuStructure } from '@/config/menu';
+    38 |
+    39 | const route = useRoute();
+[vue-tsc] Cannot find module '@/config/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/pages/menu/MenuPlaceholder.vue:37:31
+    35 | import { useRoute } from 'vue-router';
+    36 | import { useMenu } from '@/composables/useMenu';
+  > 37 | import { menuStructure } from '@/config/menu';
+       |                               ^^^^^^^^^^^^^^^
+    38 |
+    39 | const route = useRoute();
+    40 | const { getBreadcrumbs } = useMenu(menuStructure);
+[vue-tsc] Cannot find module '@/config/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/router/routes.ts:2:31
+    1 | import type { RouteRecordRaw } from 'vue-router';
+  > 2 | import { menuStructure } from '@/config/menu';
+      |                               ^^^^^^^^^^^^^^^
+    3 |
+    4 | const placeholderComponent = () => import('pages/menu/MenuPlaceholder.vue');
+    5 |
+[vue-tsc] Parameter 'item' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/router/routes.ts:30:20
+    28 |
+    29 |   const walkItems = (items: typeof menuStructure[number]['items']) => {
+  > 30 |     items.forEach((item) => {
+       |                    ^^^^
+    31 |       appendRoute(item.route, `menu-${item.id}`);
+    32 |       if (item.items?.length) {
+    33 |         walkItems(item.items);
+[vue-tsc] Parameter 'category' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/router/routes.ts:38:26
+    36 |   };
+    37 |
+  > 38 |   menuStructure.forEach((category) => {
+       |                          ^^^^^^^^
+    39 |     walkItems(category.items);
+    40 |   });
+    41 |
+[vue-tsc] Cannot find module '@/boot/axios' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/services/dashboard-service.ts:1:21
+  > 1 | import { api } from '@/boot/axios';
+      |                     ^^^^^^^^^^^^^^
+    2 | import type { DashboardDataResponse } from '@/types/dashboard';
+    3 |
+    4 | export interface DashboardQuery {
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/services/dashboard-service.ts:2:44
+    1 | import { api } from '@/boot/axios';
+  > 2 | import type { DashboardDataResponse } from '@/types/dashboard';
+      |                                            ^^^^^^^^^^^^^^^^^^^
+    3 |
+    4 | export interface DashboardQuery {
+    5 |   widgets?: string[];
+[vue-tsc] Cannot find module '@/services/dashboard-service' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/stores/dashboard-store.ts:2:34
+    1 | import { acceptHMRUpdate, defineStore } from 'pinia';
+  > 2 | import { getDashboardData } from '@/services/dashboard-service';
+      |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    3 | import type { DashboardState, DashboardWidget } from '@/types/dashboard';
+    4 |
+    5 | interface FetchOptions {
+[vue-tsc] Cannot find module '@/types/dashboard' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/stores/dashboard-store.ts:3:54
+    1 | import { acceptHMRUpdate, defineStore } from 'pinia';
+    2 | import { getDashboardData } from '@/services/dashboard-service';
+  > 3 | import type { DashboardState, DashboardWidget } from '@/types/dashboard';
+      |                                                      ^^^^^^^^^^^^^^^^^^^
+    4 |
+    5 | interface FetchOptions {
+    6 |   refresh?: boolean;
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:2:71
+    1 | import { acceptHMRUpdate, defineStore } from 'pinia';
+  > 2 | import type { MenuCategory, MenuItem, MenuState, MenuStructure } from '@/types/menu';
+      |                                                                       ^^^^^^^^^^^^^^
+    3 | import { menuStructure as defaultMenuStructure } from '@/config/menu';
+    4 | import { useMenu } from '@/composables/useMenu';
+    5 |
+[vue-tsc] Cannot find module '@/config/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:3:55
+    1 | import { acceptHMRUpdate, defineStore } from 'pinia';
+    2 | import type { MenuCategory, MenuItem, MenuState, MenuStructure } from '@/types/menu';
+  > 3 | import { menuStructure as defaultMenuStructure } from '@/config/menu';
+      |                                                       ^^^^^^^^^^^^^^^
+    4 | import { useMenu } from '@/composables/useMenu';
+    5 |
+    6 | const STORAGE_KEY = 'fui-menu-state';
+[vue-tsc] Cannot find module '@/composables/useMenu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:4:25
+    2 | import type { MenuCategory, MenuItem, MenuState, MenuStructure } from '@/types/menu';
+    3 | import { menuStructure as defaultMenuStructure } from '@/config/menu';
+  > 4 | import { useMenu } from '@/composables/useMenu';
+      |                         ^^^^^^^^^^^^^^^^^^^^^^^
+    5 |
+    6 | const STORAGE_KEY = 'fui-menu-state';
+    7 |
+[vue-tsc] Parameter 'category' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:51:52
+    49 |
+    50 |   const { categories, flattened } = useMenu(structure);
+  > 51 |   const validCategoryIds = new Set(categories.map((category) => category.id));
+       |                                                    ^^^^^^^^
+    52 |   const validItemIds = new Set(flattened.map((item) => item.id));
+    53 |
+    54 |   return {
+[vue-tsc] Parameter 'item' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:52:47
+    50 |   const { categories, flattened } = useMenu(structure);
+    51 |   const validCategoryIds = new Set(categories.map((category) => category.id));
+  > 52 |   const validItemIds = new Set(flattened.map((item) => item.id));
+       |                                               ^^^^
+    53 |
+    54 |   return {
+    55 |     leftDrawerOpen: persisted.leftDrawerOpen ?? false,
+[vue-tsc] Parameter 'id' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:56:70
+    54 |   return {
+    55 |     leftDrawerOpen: persisted.leftDrawerOpen ?? false,
+  > 56 |     expandedCategories: (persisted.expandedCategories ?? []).filter((id) =>
+       |                                                                      ^^
+    57 |       validCategoryIds.has(id),
+    58 |     ),
+    59 |     expandedItems: (persisted.expandedItems ?? []).filter((id) => validItemIds.has(id)),
+[vue-tsc] Parameter 'id' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:59:60
+    57 |       validCategoryIds.has(id),
+    58 |     ),
+  > 59 |     expandedItems: (persisted.expandedItems ?? []).filter((id) => validItemIds.has(id)),
+       |                                                            ^^
+    60 |     activeMenuItem: persisted.activeMenuItem ?? null,
+    61 |   };
+    62 | };
+[vue-tsc] Parameter 'c' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:114:50
+    112 |       }
+    113 |
+  > 114 |       const category = state.menuStructure.find((c) =>
+        |                                                  ^
+    115 |         c.items.some((item) => item.route === activeRoute),
+    116 |       );
+    117 |
+[vue-tsc] Parameter 'item' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:115:23
+    113 |
+    114 |       const category = state.menuStructure.find((c) =>
+  > 115 |         c.items.some((item) => item.route === activeRoute),
+        |                       ^^^^
+    116 |       );
+    117 |
+    118 |       return category?.id ?? null;
+[vue-tsc] Parameter 'item' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:139:22
+    137 |       }
+    138 |
+  > 139 |       items.forEach((item, index) => {
+        |                      ^^^^
+    140 |         if ('id' in item) {
+    141 |           const hasChildren = 'items' in item && Array.isArray(item.items) && item.items.length > 0;
+    142 |           if (index < items.length - 1 || hasChildren) {
+[vue-tsc] Parameter 'index' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:139:28
+    137 |       }
+    138 |
+  > 139 |       items.forEach((item, index) => {
+        |                            ^^^^^
+    140 |         if ('id' in item) {
+    141 |           const hasChildren = 'items' in item && Array.isArray(item.items) && item.items.length > 0;
+    142 |           if (index < items.length - 1 || hasChildren) {
+[vue-tsc] Parameter 'id' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:181:65
+    179 |
+    180 |     collapseCategory(categoryId: string) {
+  > 181 |       this.expandedCategories = this.expandedCategories.filter((id) => id !== categoryId);
+        |                                                                 ^^
+    182 |       this.persist();
+    183 |     },
+    184 |
+[vue-tsc] Parameter 'id' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/src/stores/menu-store.ts:199:55
+    197 |
+    198 |     collapseItem(itemId: string) {
+  > 199 |       this.expandedItems = this.expandedItems.filter((id) => id !== itemId);
+        |                                                       ^^
+    200 |       this.persist();
+    201 |     },
+    202 |
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/src/stores/navigation-store.ts:2:38
+    1 | import { defineStore, acceptHMRUpdate } from 'pinia';
+  > 2 | import type { NavigationState } from '@/types/menu';
+      |                                      ^^^^^^^^^^^^^^
+    3 |
+    4 | const STORAGE_KEY = 'fui-navigation-state';
+    5 |
+[vue-tsc] Cannot find module '@/router/routes' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/integration/dashboard-navigation.spec.ts:5:20
+    3 | import { createMemoryHistory, createRouter } from 'vue-router';
+    4 | import { createPinia } from 'pinia';
+  > 5 | import routes from '@/router/routes';
+      |                    ^^^^^^^^^^^^^^^^^
+    6 | import { getDashboardData } from '@/services/dashboard-service';
+    7 |
+    8 | vi.mock('@/services/dashboard-service', () => ({
+[vue-tsc] Cannot find module '@/services/dashboard-service' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/integration/dashboard-navigation.spec.ts:6:34
+    4 | import { createPinia } from 'pinia';
+    5 | import routes from '@/router/routes';
+  > 6 | import { getDashboardData } from '@/services/dashboard-service';
+      |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    7 |
+    8 | vi.mock('@/services/dashboard-service', () => ({
+    9 |   getDashboardData: vi.fn(),
+[vue-tsc] Cannot find module '@/router/routes' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/integration/menu-multilevel.spec.ts:6:20
+    4 | import { createPinia, setActivePinia } from 'pinia';
+    5 | import MainLayout from '@/layouts/MainLayout.vue';
+  > 6 | import routes from '@/router/routes';
+      |                    ^^^^^^^^^^^^^^^^^
+    7 | import { useMenuStore } from '@/stores/menu-store';
+    8 |
+    9 | vi.mock('@/services/dashboard-service', () => ({
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/integration/menu-multilevel.spec.ts:7:30
+     5 | import MainLayout from '@/layouts/MainLayout.vue';
+     6 | import routes from '@/router/routes';
+  >  7 | import { useMenuStore } from '@/stores/menu-store';
+       |                              ^^^^^^^^^^^^^^^^^^^^^
+     8 |
+     9 | vi.mock('@/services/dashboard-service', () => ({
+    10 |   getDashboardData: vi.fn().mockResolvedValue({
+[vue-tsc] Cannot find module '@/router/routes' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/integration/menu-subitems.spec.ts:6:20
+    4 | import { createMemoryHistory, createRouter } from 'vue-router';
+    5 | import MainLayout from '@/layouts/MainLayout.vue';
+  > 6 | import routes from '@/router/routes';
+      |                    ^^^^^^^^^^^^^^^^^
+    7 | import { useMenuStore } from '@/stores/menu-store';
+    8 | import { getDashboardData } from '@/services/dashboard-service';
+    9 |
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/integration/menu-subitems.spec.ts:7:30
+     5 | import MainLayout from '@/layouts/MainLayout.vue';
+     6 | import routes from '@/router/routes';
+  >  7 | import { useMenuStore } from '@/stores/menu-store';
+       |                              ^^^^^^^^^^^^^^^^^^^^^
+     8 | import { getDashboardData } from '@/services/dashboard-service';
+     9 |
+    10 | vi.mock('@/services/dashboard-service', () => ({
+[vue-tsc] Cannot find module '@/services/dashboard-service' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/integration/menu-subitems.spec.ts:8:34
+     6 | import routes from '@/router/routes';
+     7 | import { useMenuStore } from '@/stores/menu-store';
+  >  8 | import { getDashboardData } from '@/services/dashboard-service';
+       |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     9 |
+    10 | vi.mock('@/services/dashboard-service', () => ({
+    11 |   getDashboardData: vi.fn().mockResolvedValue({
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/components/menu/MenuKeyboardNavigation.spec.ts:6:30
+    4 | import { createMemoryHistory, createRouter } from 'vue-router';
+    5 | import SideMenu from '@/components/menu/SideMenu.vue';
+  > 6 | import { useMenuStore } from '@/stores/menu-store';
+      |                              ^^^^^^^^^^^^^^^^^^^^^
+    7 | import type { MenuStructure } from '@/types/menu';
+    8 |
+    9 | const buildMenuStructure = (): MenuStructure => [
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/components/menu/MenuKeyboardNavigation.spec.ts:7:36
+     5 | import SideMenu from '@/components/menu/SideMenu.vue';
+     6 | import { useMenuStore } from '@/stores/menu-store';
+  >  7 | import type { MenuStructure } from '@/types/menu';
+       |                                    ^^^^^^^^^^^^^^
+     8 |
+     9 | const buildMenuStructure = (): MenuStructure => [
+    10 |   {
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/components/menu/MultiLevelMenu.spec.ts:7:30
+     5 | import MenuItem from '@/components/menu/MenuItem.vue';
+     6 | import SideMenu from '@/components/menu/SideMenu.vue';
+  >  7 | import { useMenuStore } from '@/stores/menu-store';
+       |                              ^^^^^^^^^^^^^^^^^^^^^
+     8 | import type { MenuItem as MenuItemType, MenuStructure } from '@/types/menu';
+     9 |
+    10 | const createTestRouter = async (routes: { path: string }[]) => {
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/components/menu/MultiLevelMenu.spec.ts:8:62
+     6 | import SideMenu from '@/components/menu/SideMenu.vue';
+     7 | import { useMenuStore } from '@/stores/menu-store';
+  >  8 | import type { MenuItem as MenuItemType, MenuStructure } from '@/types/menu';
+       |                                                              ^^^^^^^^^^^^^^
+     9 |
+    10 | const createTestRouter = async (routes: { path: string }[]) => {
+    11 |   const router = createRouter({
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/components/menu/SideMenu.spec.ts:6:30
+    4 | import { createMemoryHistory, createRouter } from 'vue-router';
+    5 | import SideMenu from '@/components/menu/SideMenu.vue';
+  > 6 | import { useMenuStore } from '@/stores/menu-store';
+      |                              ^^^^^^^^^^^^^^^^^^^^^
+    7 | import type { MenuStructure } from '@/types/menu';
+    8 |
+    9 | const buildMenuStructure = (): MenuStructure => [
+[vue-tsc] Cannot find module '@/types/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/components/menu/SideMenu.spec.ts:7:36
+     5 | import SideMenu from '@/components/menu/SideMenu.vue';
+     6 | import { useMenuStore } from '@/stores/menu-store';
+  >  7 | import type { MenuStructure } from '@/types/menu';
+       |                                    ^^^^^^^^^^^^^^
+     8 |
+     9 | const buildMenuStructure = (): MenuStructure => [
+    10 |   {
+[vue-tsc] Cannot find name 'beforeEach'.
+/Users/silve/project/roiet/fui-furniture/tests/unit/components/menu/SideMenu.spec.ts:70:3
+    68 |
+    69 | describe('SideMenu.vue', () => {
+  > 70 |   beforeEach(() => {
+       |   ^^^^^^^^^^
+    71 |     localStorage.clear();
+    72 |   });
+    73 |
+[vue-tsc] Cannot find module '@/composables/useMenu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/composables/useMenu.spec.ts:2:25
+    1 | import { describe, expect, it } from 'vitest';
+  > 2 | import { useMenu } from '@/composables/useMenu';
+      |                         ^^^^^^^^^^^^^^^^^^^^^^^
+    3 | import { menuStructure } from '@/config/menu';
+    4 |
+    5 | describe('useMenu composable', () => {
+[vue-tsc] Cannot find module '@/config/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/composables/useMenu.spec.ts:3:31
+    1 | import { describe, expect, it } from 'vitest';
+    2 | import { useMenu } from '@/composables/useMenu';
+  > 3 | import { menuStructure } from '@/config/menu';
+      |                               ^^^^^^^^^^^^^^^
+    4 |
+    5 | describe('useMenu composable', () => {
+    6 |   const { findCategoryById, findItemById, findItemByRoute, getBreadcrumbs, getAllRoutes } =
+[vue-tsc] Parameter 'crumb' implicitly has an 'any' type.
+/Users/silve/project/roiet/fui-furniture/tests/unit/composables/useMenu.spec.ts:24:29
+    22 |   it('สร้าง breadcrumb ตาม route', () => {
+    23 |     const breadcrumbs = getBreadcrumbs('/inventory/categories');
+  > 24 |     expect(breadcrumbs.map((crumb) => crumb.id)).toEqual(['inventory', 'inventory-categories']);
+       |                             ^^^^^
+    25 |   });
+    26 |
+    27 |   it('ส่งคืนรายชื่อ route ทั้งหมดที่มี', () => {
+[vue-tsc] Cannot find module '@/stores/dashboard-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/stores/dashboard-store.spec.ts:3:35
+    1 | import { beforeEach, describe, expect, it, vi } from 'vitest';
+    2 | import { createPinia, setActivePinia } from 'pinia';
+  > 3 | import { useDashboardStore } from '@/stores/dashboard-store';
+      |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4 | import { getDashboardData } from '@/services/dashboard-service';
+    5 |
+    6 | vi.mock('@/services/dashboard-service', () => ({
+[vue-tsc] Cannot find module '@/services/dashboard-service' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/stores/dashboard-store.spec.ts:4:34
+    2 | import { createPinia, setActivePinia } from 'pinia';
+    3 | import { useDashboardStore } from '@/stores/dashboard-store';
+  > 4 | import { getDashboardData } from '@/services/dashboard-service';
+      |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5 |
+    6 | vi.mock('@/services/dashboard-service', () => ({
+    7 |   getDashboardData: vi.fn(),
+[vue-tsc] Cannot find module '@/stores/menu-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/stores/menu-store.spec.ts:3:30
+    1 | import { beforeEach, describe, expect, it } from 'vitest';
+    2 | import { createPinia, setActivePinia } from 'pinia';
+  > 3 | import { useMenuStore } from '@/stores/menu-store';
+      |                              ^^^^^^^^^^^^^^^^^^^^^
+    4 | import { menuStructure } from '@/config/menu';
+    5 |
+    6 | describe('menu-store', () => {
+[vue-tsc] Cannot find module '@/config/menu' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/stores/menu-store.spec.ts:4:31
+    2 | import { createPinia, setActivePinia } from 'pinia';
+    3 | import { useMenuStore } from '@/stores/menu-store';
+  > 4 | import { menuStructure } from '@/config/menu';
+      |                               ^^^^^^^^^^^^^^^
+    5 |
+    6 | describe('menu-store', () => {
+    7 |   beforeEach(() => {
+[vue-tsc] Cannot find module '@/stores/navigation-store' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/unit/stores/navigation-store.spec.ts:3:36
+    1 | import { beforeEach, describe, expect, it } from 'vitest';
+    2 | import { createPinia, setActivePinia } from 'pinia';
+  > 3 | import { useNavigationStore } from '@/stores/navigation-store';
+      |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4 |
+    5 | const STORAGE_KEY = 'fui-navigation-state';
+    6 |
+[vue-tsc] Cannot find module '@/i18n/en-US' or its corresponding type declarations.
+/Users/silve/project/roiet/fui-furniture/tests/vitest.setup.ts:4:18
+    2 | import { defineComponent, h } from 'vue';
+    3 | import { createI18n } from 'vue-i18n';
+  > 4 | import enUS from '@/i18n/en-US';
+      |                  ^^^^^^^^^^^^^^
+    5 |
+    6 | const createStub = (name: string) =>
+    7 |   defineComponent({
+[vue-tsc] No overload matches this call. The last overload gave the following error. Type 'Plugin<Api>' is not assignable to type 'PluginOption'. Type 'Plugin<Api>' is not assignable to type 'Plugin<any>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties. Types of property 'apply' are incompatible. Type '"build" | "serve" | ((this: void, config: import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vite/dist/node/index").UserConfig, env: import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vite/dist/node/index").ConfigEnv) => boolean)' is not assignable to type '"build" | "serve" | ((this: void, config: import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vitest/node_modules/vite/dist/node/index").UserConfig, env: import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vitest/node_modules/vite/dist/node/index").ConfigEnv) => boolean)'. Type '(this: void, config: UserConfig, env: ConfigEnv) => boolean' is not assignable to type '"build" | "serve" | ((this: void, config: UserConfig, env: ConfigEnv) => boolean)'. Type '(this: void, config: import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vite/dist/node/index").UserConfig, env: import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vite/dist/node/index").ConfigEnv) => boolean' is not assignable to type '(this: void, config: import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vitest/node_modules/vite/dist/node/index").UserConfig, env: import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vitest/node_modules/vite/dist/node/index").ConfigEnv) => boolean'. Types of parameters 'config' and 'config' are incompatible. Type 'import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vitest/node_modules/vite/dist/node/index").UserConfig' is not assignable to type 'import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vite/dist/node/index").UserConfig' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties. Types of property 'plugins' are incompatible. Type 'import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vitest/node_modules/vite/dist/node/index").PluginOption[]' is not assignable to type 'import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vite/dist/node/index").PluginOption[]'. Type 'import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vitest/node_modules/vite/dist/node/index").PluginOption' is not assignable to type 'import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vite/dist/node/index").PluginOption'. Type 'Plugin<any>' is not assignable to type 'PluginOption'. Type 'import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vitest/node_modules/vite/dist/node/index").Plugin<any>' is not assignable to type 'import("C:/Users/silve/project/roiet/fui-furniture/node_modules/vite/dist/node/index").Plugin<any>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties. Types of property 'resolveId' are incompatible. Type 'ObjectHook<(this: PluginContext, source: string, importer: string | undefined, options: { attributes: Record<string, string>; custom?: CustomPluginOptions; ssr?: boolean; isEntry: boolean; }) => ResolveIdResult | Promise<...>>' is not assignable to type 'ObjectHook<(this: PluginContext, source: string, importer: string | undefined, options: { attributes: Record<string, string>; custom?: CustomPluginOptions; ssr?: boolean | undefined; isEntry: boolean; }) => ResolveIdResult | Promise<...>, { ...; }>'. Type '(this: PluginContext, source: string, importer: string | undefined, options: { attributes: Record<string, string>; custom?: CustomPluginOptions; ssr?: boolean; isEntry: boolean; }) => ResolveIdResult | Promise<...>' is not assignable to type 'ObjectHook<(this: PluginContext, source: string, importer: string | undefined, options: { attributes: Record<string, string>; custom?: CustomPluginOptions; ssr?: boolean | undefined; isEntry: boolean; }) => ResolveIdResult | Promise<...>, { ...; }>'. Type '(this: PluginContext, source: string, importer: string | undefined, options: { attributes: Record<string, string>; custom?: CustomPluginOptions; ssr?: boolean; isEntry: boolean; }) => ResolveIdResult | Promise<...>' is not assignable to type '(this: PluginContext, source: string, importer: string | undefined, options: { attributes: Record<string, string>; custom?: CustomPluginOptions; ssr?: boolean | undefined; isEntry: boolean; }) => ResolveIdResult | Promise<...>'. Types of parameters 'options' and 'options' are incompatible. Type '{ attributes: Record<string, string>; custom?: CustomPluginOptions; ssr?: boolean | undefined; isEntry: boolean; }' is not assignable to type '{ attributes: Record<string, string>; custom?: CustomPluginOptions; ssr?: boolean; isEntry: boolean; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties. Types of property 'ssr' are incompatible. Type 'boolean | undefined' is not assignable to type 'boolean'. Type 'undefined' is not assignable to type 'boolean'.
+/Users/silve/project/roiet/fui-furniture/vitest.config.ts:6:13
+    4 |
+    5 | export default defineConfig({
+  > 6 |   plugins: [vue()],
+      |             ^^^^^
+    7 |   resolve: {
+    8 |     alias: {
+    9 |       '@': fileURLToPath(new URL('./src', import.meta.url)),
+[ESLint] 'MenuCategory' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:4:17
+    2 | import { menuStructure as defaultMenuStructure } from '@/config/menu';
+    3 |
+  > 4 | type MenuNode = MenuCategory | MenuItem;
+      |                 ^^^^^^^^^^^^
+    5 |
+    6 | function flattenMenu(structure: MenuStructure): MenuItem[] {
+    7 |   const items: MenuItem[] = [];
+[ESLint] 'MenuItem' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:4:32
+    2 | import { menuStructure as defaultMenuStructure } from '@/config/menu';
+    3 |
+  > 4 | type MenuNode = MenuCategory | MenuItem;
+      |                                ^^^^^^^^
+    5 |
+    6 | function flattenMenu(structure: MenuStructure): MenuItem[] {
+    7 |   const items: MenuItem[] = [];
+[ESLint] 'stack' is assigned a value but never used. (@typescript-eslint/no-unused-vars)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:30:11
+    28 | ): { category: MenuCategory; path: MenuItem[] } | null {
+    29 |   for (const category of structure) {
+  > 30 |     const stack: MenuItem[] = [];
+       |           ^^^^^
+    31 |     const found = depthFirstSearch(category.items, (item, ancestors) => {
+    32 |       if (!item.route) {
+    33 |         return false;
+[ESLint] 'ancestors' is defined but never used. (@typescript-eslint/no-unused-vars)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:31:59
+    29 |   for (const category of structure) {
+    30 |     const stack: MenuItem[] = [];
+  > 31 |     const found = depthFirstSearch(category.items, (item, ancestors) => {
+       |                                                           ^^^^^^^^^
+    32 |       if (!item.route) {
+    33 |         return false;
+    34 |       }
+[ESLint] 'any' overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:70:62
+    68 | }
+    69 |
+  > 70 | function findNodeById(structure: MenuStructure, id: string): MenuNode | null {
+       |                                                              ^^^^^^^^
+    71 |   const category = structure.find((cat) => cat.id === id);
+    72 |   if (category) {
+    73 |     return category;
+[ESLint] 'MenuItem' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:89:38
+    87 |   const flattened = flattenMenu(structure);
+    88 |
+  > 89 |   const findItemById = (id: string): MenuItem | null => {
+       |                                      ^^^^^^^^
+    90 |     const node = findNodeById(structure, id);
+    91 |     if (node && 'route' in node) {
+    92 |       return node as MenuItem;
+[ESLint] 'MenuCategory' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:97:42
+     95 |   };
+     96 |
+  >  97 |   const findCategoryById = (id: string): MenuCategory | null => {
+        |                                          ^^^^^^^^^^^^
+     98 |     const node = findNodeById(structure, id);
+     99 |     return node && 'items' in node && 'order' in node && 'icon' in node ? (node as MenuCategory) : null;
+    100 |   };
+[ESLint] 'MenuItem' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:102:44
+    100 |   };
+    101 |
+  > 102 |   const findItemByRoute = (route: string): MenuItem | null => {
+        |                                            ^^^^^^^^
+    103 |     const match = findPathByRoute(structure, route);
+    104 |     return match?.path.at(-1) ?? null;
+    105 |   };
+[ESLint] 'MenuCategory' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:107:44
+    105 |   };
+    106 |
+  > 107 |   const getBreadcrumbs = (route: string): (MenuCategory | MenuItem)[] => {
+        |                                            ^^^^^^^^^^^^
+    108 |     const match = findPathByRoute(structure, route);
+    109 |     if (!match) {
+    110 |       return [];
+[ESLint] 'MenuItem' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\composables\useMenu.ts:107:59
+    105 |   };
+    106 |
+  > 107 |   const getBreadcrumbs = (route: string): (MenuCategory | MenuItem)[] => {
+        |                                                           ^^^^^^^^
+    108 |     const match = findPathByRoute(structure, route);
+    109 |     if (!match) {
+    110 |       return [];
+[ESLint] Component name "Dashboard" should always be multi-word. (vue/multi-word-component-names)
+C:\Users\silve\project\roiet\fui-furniture\src\pages\Dashboard.vue:1:1
+    1 | <template>
+    2 |   <q-page padding data-testid="dashboard-page">
+    3 |     <div class="row items-center justify-between q-mb-lg">
+[ESLint] This assertion is unnecessary since it does not change the type of the expression. (@typescript-eslint/no-unnecessary-type-assertion)
+C:\Users\silve\project\roiet\fui-furniture\src\services\dashboard-service.ts:21:20
+    19 |
+    20 |   const response = await api.get('/dashboard', { params });
+  > 21 |   const payload = (response.data?.data as DashboardDataResponse | undefined) ?? response.data;
+       |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    22 |
+    23 |   if (!payload || !Array.isArray(payload.widgets) || typeof payload.lastUpdated !== 'string') {
+    24 |     throw new Error('Invalid dashboard response shape');
+[ESLint] 'DashboardDataResponse' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\services\dashboard-service.ts:21:43
+    19 |
+    20 |   const response = await api.get('/dashboard', { params });
+  > 21 |   const payload = (response.data?.data as DashboardDataResponse | undefined) ?? response.data;
+       |                                           ^^^^^^^^^^^^^^^^^^^^^
+    22 |
+    23 |   if (!payload || !Array.isArray(payload.widgets) || typeof payload.lastUpdated !== 'string') {
+    24 |     throw new Error('Invalid dashboard response shape');
+[ESLint] 'MenuState' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\stores\menu-store.ts:25:32
+    23 | };
+    24 |
+  > 25 | const loadPersistedState = (): Partial<MenuState> | null => {
+       |                                ^^^^^^^^^^^^^^^^^^
+    26 |   if (!isClient()) {
+    27 |     return null;
+    28 |   }
+[ESLint] 'MenuState' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\stores\menu-store.ts:44:14
+    42 | const normalizePersistedState = (
+    43 |   structure: MenuStructure,
+  > 44 |   persisted: Partial<MenuState> | null,
+       |              ^^^^^^^^^^^^^^^^^^
+    45 | ): Partial<MenuState> | null => {
+    46 |   if (!persisted) {
+    47 |     return null;
+[ESLint] 'MenuState' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\stores\menu-store.ts:45:4
+    43 |   structure: MenuStructure,
+    44 |   persisted: Partial<MenuState> | null,
+  > 45 | ): Partial<MenuState> | null => {
+       |    ^^^^^^^^^^^^^^^^^^
+    46 |   if (!persisted) {
+    47 |     return null;
+    48 |   }
+[ESLint] 'NavigationState' is an 'error' type that acts as 'any' and overrides all other types in this union type. (@typescript-eslint/no-redundant-type-constituents)
+C:\Users\silve\project\roiet\fui-furniture\src\stores\navigation-store.ts:20:32
+    18 | };
+    19 |
+  > 20 | const loadPersistedState = (): Partial<NavigationState> | null => {
+       |                                ^^^^^^^^^^^^^^^^^^^^^^^^
+    21 |   if (!isClient()) {
+    22 |     return null;
+    23 |   }
