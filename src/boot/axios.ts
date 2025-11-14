@@ -134,6 +134,20 @@ api.interceptors.request.use(
       // ignore token lookup errors
     }
 
+    // ตรวจสอบและส่ง CSRF token จาก cookie
+    if (typeof document !== 'undefined') {
+      const csrfCookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
+      const csrfToken = csrfCookie ? csrfCookie.split('=')[1] : null;
+
+      if (csrfToken) {
+        // ส่ง CSRF token เป็น header เอง เพราะ Axios อาจจะไม่สามารถอ่าน cookie จาก domain อื่นได้
+        config.headers = config.headers ?? {};
+        if (!config.headers['X-XSRF-TOKEN']) {
+          config.headers['X-XSRF-TOKEN'] = decodeURIComponent(csrfToken);
+        }
+      }
+    }
+
     return config;
   },
   (error) => {

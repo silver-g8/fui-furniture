@@ -29,31 +29,61 @@ interface MeResponseDto {
 }
 
 const AUTH_PREFIX = '/auth';
-const CSRF_COOKIE_ENDPOINT =
-  import.meta.env.VITE_CSRF_COOKIE_URL?.trim() || '/sanctum/csrf-cookie';
+const CSRF_COOKIE_ENDPOINT = import.meta.env.VITE_CSRF_COOKIE_URL?.trim() || '/sanctum/csrf-cookie';
 
 let csrfCookieFetched = false;
 
 const buildCsrfCookieUrl = (): string => {
+  // ถ้า CSRF_COOKIE_ENDPOINT เป็น full URL ให้ใช้เลย
   if (/^https?:\/\//i.test(CSRF_COOKIE_ENDPOINT)) {
     return CSRF_COOKIE_ENDPOINT;
   }
 
-  if (/^https?:\/\//i.test(apiBaseURL)) {
+  // วิธีที่ 1: ใช้ VITE_BACKEND_URL ถ้ามี (แนะนำสำหรับ production)
+  const backendUrl = import.meta.env.VITE_BACKEND_URL?.trim();
+  if (backendUrl && /^https?:\/\//i.test(backendUrl)) {
     try {
-      const { origin } = new URL(apiBaseURL);
-      return `${origin}${CSRF_COOKIE_ENDPOINT.startsWith('/') ? '' : '/'}${CSRF_COOKIE_ENDPOINT}`;
-    } catch {
-      // ถ้า parsing ไม่สำเร็จ ให้ตกไปใช้ origin ของหน้าปัจจุบัน
+      const backendOrigin = new URL(backendUrl).origin;
+      return `${backendOrigin}${CSRF_COOKIE_ENDPOINT.startsWith('/') ? '' : '/'}${CSRF_COOKIE_ENDPOINT}`;
+    } catch (error) {
+      console.warn('[Auth] Failed to parse VITE_BACKEND_URL:', backendUrl, error);
     }
   }
 
+  // วิธีที่ 2: ใช้ apiBaseURL ถ้าเป็น full URL
+  if (/^https?:\/\//i.test(apiBaseURL)) {
+    try {
+      const apiUrl = new URL(apiBaseURL);
+      // ลบ /api/v1 ออกเพื่อได้ base origin
+      const basePath = apiUrl.pathname.replace(/\/api\/v1\/?$/, '');
+      const origin = apiUrl.origin;
+      return `${origin}${basePath}${CSRF_COOKIE_ENDPOINT.startsWith('/') ? '' : '/'}${CSRF_COOKIE_ENDPOINT}`;
+    } catch (error) {
+      console.warn('[Auth] Failed to parse apiBaseURL:', apiBaseURL, error);
+    }
+  }
+
+  // ⚠️ Fallback: ถ้า apiBaseURL ไม่ใช่ full URL
+  // ใน production ควรตั้งค่า VITE_BACKEND_URL หรือ VITE_API_BASE_URL เป็น full URL
   if (typeof window !== 'undefined' && window.location?.origin) {
+    console.error(
+      '[Auth] ⚠️ CRITICAL: apiBaseURL is not a full URL and VITE_BACKEND_URL is not set!',
+      '\n  CSRF cookie will use Frontend origin (WRONG in production):',
+      window.location.origin,
+      '\n  Please set one of these in .env.production:',
+      '\n    - VITE_BACKEND_URL=https://imageapi.sg8net.com',
+      '\n    - OR VITE_API_BASE_URL=https://imageapi.sg8net.com/api/v1',
+      '\n  Current apiBaseURL:',
+      apiBaseURL,
+    );
+
+    // ⚠️ ใช้ Frontend origin (ผิดใน production แต่จำเป็นสำหรับ fallback)
     return `${window.location.origin}${
       CSRF_COOKIE_ENDPOINT.startsWith('/') ? '' : '/'
     }${CSRF_COOKIE_ENDPOINT}`;
   }
 
+  // Last resort fallback
   return CSRF_COOKIE_ENDPOINT;
 };
 
@@ -71,6 +101,7 @@ const ensureCsrfCookie = async () => {
         'X-Requested-With': 'XMLHttpRequest',
       },
     });
+    
     csrfCookieFetched = true;
   } catch (error) {
     csrfCookieFetched = false;

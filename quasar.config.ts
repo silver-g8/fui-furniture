@@ -36,6 +36,8 @@ export default defineConfig((ctx) => {
       target: {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20',
+        vueRouterMode: 'hash',
+        publicPath: '/',
       },
 
       typescript: {
@@ -54,7 +56,14 @@ export default defineConfig((ctx) => {
       // publicPath: '/',
       // analyze: true,
       // env: {},
-      // rawDefine: {}
+      rawDefine: {
+        'import.meta.env.VITE_API_BASE_URL': JSON.stringify(
+          process.env.VITE_API_BASE_URL || 'https://imageapi.sg8net.com/api/v1'
+        ),
+        'import.meta.env.VITE_BACKEND_URL': JSON.stringify(
+          process.env.VITE_BACKEND_URL || 'https://imageapi.sg8net.com'
+        ),
+      },
       // ignorePublicFolder: true,
       // minify: false,
       // polyfillModulePreload: true,
