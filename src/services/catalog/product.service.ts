@@ -226,3 +226,39 @@ export const updateProduct = async (id: number, payload: ProductPayload): Promis
 export const deleteProduct = async (id: number): Promise<void> => {
   await catalogApi.delete(`${PRODUCT_ENDPOINT}/${id}`);
 };
+
+/**
+ * Upload an image file for a product.
+ *
+ * @param id - Product ID
+ * @param file - Image file to upload (JPEG, PNG, or WebP, max 2MB)
+ * @returns Updated product with image_url
+ */
+export const uploadProductImage = async (id: number, file: File): Promise<Product> => {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  await catalogApi.post<ProductItemPayload>(
+    `${PRODUCT_ENDPOINT}/${id}/image`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  );
+
+  // The API returns { image_url: string }, so we need to fetch the updated product
+  const updatedProduct = await getProduct(id);
+  return updatedProduct;
+};
+
+/**
+ * Delete the image for a product.
+ *
+ * @param id - Product ID
+ * @returns Promise that resolves when deletion is complete
+ */
+export const deleteProductImage = async (id: number): Promise<void> => {
+  await catalogApi.delete(`${PRODUCT_ENDPOINT}/${id}/image`);
+};

@@ -103,16 +103,55 @@
         />
       </div>
 
-      <div class="col-12 col-md-6">
-        <q-input
-          v-model="formState.imageUrl"
-          type="url"
-          :label="t('catalog.products.fields.imageUrl')"
-          :disable="loading"
-          outlined
-          dense
-          clearable
-        />
+      <div class="col-12">
+        <div class="q-mb-md">
+          <div v-if="formState.imageUrl" class="q-mb-md">
+            <q-img
+              :src="formState.imageUrl"
+              :alt="t('catalog.products.fields.imageUrl')"
+              style="max-width: 300px; max-height: 300px"
+              fit="contain"
+              data-test="image-preview"
+            >
+              <template v-slot:error>
+                <div class="absolute-full flex flex-center bg-negative text-white">
+                  {{ t('catalog.products.errors.imageLoadError') }}
+                </div>
+              </template>
+            </q-img>
+          </div>
+          <q-file
+            v-model="imageFile"
+            :label="t('catalog.products.fields.imageUrl')"
+            accept="image/jpeg,image/png,image/webp"
+            max-file-size="2048000"
+            :disable="loading || uploadingImage"
+            outlined
+            dense
+            clearable
+            @update:model-value="handleImageUpload"
+            data-test="file-input"
+          >
+            <template v-slot:prepend>
+              <q-icon name="attach_file" />
+            </template>
+          </q-file>
+          <div v-if="productId && formState.imageUrl" class="q-mt-sm">
+            <q-btn
+              color="negative"
+              icon="delete"
+              :label="t('catalog.products.actions.deleteImage')"
+              :disable="loading || deletingImage"
+              :loading="deletingImage"
+              size="sm"
+              @click="handleImageDelete"
+              data-test="delete-image"
+            />
+          </div>
+          <div v-if="uploadError" class="q-mt-xs text-negative text-caption">
+            {{ uploadError }}
+          </div>
+        </div>
       </div>
 
       <div class="col-12">
@@ -154,6 +193,8 @@ import { ref, watch, reactive, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { QForm } from 'quasar';
 import type { ProductPayload, ProductStatus } from '@/types/catalog';
+import { useNotifier } from '@/composables/useNotifier';
+import { uploadProductImage, deleteProductImage } from '@/services/catalog/product.service';
 
 interface Option {
   label: string;
@@ -184,6 +225,7 @@ const props = withDefaults(
     loading?: boolean;
     brandOptions?: Option[];
     categoryOptions?: Option[];
+    productId?: number;
   }>(),
   {
     modelValue: () => ({}),
@@ -200,7 +242,12 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { success: notifySuccess, error: notifyError } = useNotifier();
 const formRef = ref<QForm>();
+const imageFile = ref<File | null>(null);
+const uploadingImage = ref(false);
+const deletingImage = ref(false);
+const uploadError = ref<string | null>(null);
 const formState = reactive<ProductFormState>({
   ...defaultState(),
   ...props.modelValue,
@@ -291,6 +338,82 @@ watch(
   },
   { deep: true },
 );
+
+const handleImageUpload = async (files: File | File[] | null) => {
+  uploadError.value = null;
+
+  if (!files || (Array.isArray(files) && files.length === 0)) {
+    return;
+  }
+
+  const file = Array.isArray(files) ? files[0] : files;
+
+  // Validate file exists
+  if (!file) {
+    return;
+  }
+
+  // Validate file type
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    uploadError.value = t('catalog.products.errors.invalidImageType');
+    imageFile.value = null;
+    return;
+  }
+
+  // Validate file size (2MB = 2048000 bytes)
+  const maxSize = 2048000;
+  if (file.size > maxSize) {
+    uploadError.value = t('catalog.products.errors.imageTooLarge');
+    imageFile.value = null;
+    return;
+  }
+
+  // Only upload if we have a productId (edit mode)
+  if (!props.productId) {
+    // In create mode, just store the file for later upload after product creation
+    // For now, we'll show an error
+    uploadError.value = t('catalog.products.errors.imageUploadRequiresProduct');
+    imageFile.value = null;
+    return;
+  }
+
+  uploadingImage.value = true;
+
+  try {
+    const updatedProduct = await uploadProductImage(props.productId, file);
+    formState.imageUrl = updatedProduct.imageUrl;
+    notifySuccess({ message: t('catalog.products.notify.imageUploadSuccess') });
+    imageFile.value = null;
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : t('catalog.products.errors.imageUploadFailed');
+    uploadError.value = message;
+    notifyError({ message });
+  } finally {
+    uploadingImage.value = false;
+  }
+};
+
+const handleImageDelete = async () => {
+  if (!props.productId || !formState.imageUrl) {
+    return;
+  }
+
+  deletingImage.value = true;
+
+  try {
+    await deleteProductImage(props.productId);
+    formState.imageUrl = null;
+    notifySuccess({ message: t('catalog.products.notify.imageDeleteSuccess') });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : t('catalog.products.errors.imageDeleteFailed');
+    notifyError({ message });
+  } finally {
+    deletingImage.value = false;
+  }
+};
 
 const handleSubmit = async () => {
   const form = formRef.value;

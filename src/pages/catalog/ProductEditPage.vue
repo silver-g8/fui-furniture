@@ -26,6 +26,7 @@
           :loading="productsSaving || submitting"
           :category-options="categoryOptions"
           :brand-options="brandOptions"
+          :product-id="productId"
           @submit="handleSubmit"
           @cancel="handleCancel"
         />

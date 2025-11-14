@@ -80,6 +80,7 @@ export default {
       refresh: 'รีเฟรช',
       submit: 'บันทึก',
       cancel: 'ยกเลิก',
+      deleteImage: 'ลบรูปภาพ',
     },
     notify: {
       loadError: 'ไม่สามารถโหลดรายการสินค้า กรุณาลองใหม่',
@@ -88,10 +89,20 @@ export default {
       deleteSuccess: 'ลบสินค้าเรียบร้อย',
       categoryLoadError: 'ไม่สามารถโหลดหมวดหมู่ได้ กรุณาลองใหม่',
       brandLoadError: 'ไม่สามารถโหลดแบรนด์ได้ กรุณาลองใหม่',
+      imageUploadSuccess: 'อัปโหลดรูปภาพเรียบร้อย',
+      imageDeleteSuccess: 'ลบรูปภาพเรียบร้อย',
     },
     confirm: {
       deleteTitle: 'ลบสินค้านี้หรือไม่?',
       deleteMessage: 'การกระทำนี้ไม่สามารถย้อนกลับได้',
+    },
+    errors: {
+      invalidImageType: 'รูปแบบไฟล์ไม่ถูกต้อง กรุณาใช้ไฟล์ JPEG, PNG หรือ WebP',
+      imageTooLarge: 'ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 2MB)',
+      imageUploadRequiresProduct: 'กรุณาสร้างสินค้าก่อนอัปโหลดรูปภาพ',
+      imageLoadError: 'ไม่สามารถโหลดรูปภาพได้',
+      imageUploadFailed: 'อัปโหลดรูปภาพไม่สำเร็จ กรุณาลองใหม่',
+      imageDeleteFailed: 'ลบรูปภาพไม่สำเร็จ กรุณาลองใหม่',
     },
   },
   stock: {

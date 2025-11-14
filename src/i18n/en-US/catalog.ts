@@ -80,6 +80,7 @@ export default {
       refresh: 'Refresh',
       submit: 'Save',
       cancel: 'Cancel',
+      deleteImage: 'Delete image',
     },
     notify: {
       loadError: 'Unable to load products. Please try again.',
@@ -88,10 +89,20 @@ export default {
       deleteSuccess: 'Product deleted successfully.',
       categoryLoadError: 'Unable to load categories. Please try again.',
       brandLoadError: 'Unable to load brands. Please try again.',
+      imageUploadSuccess: 'Image uploaded successfully.',
+      imageDeleteSuccess: 'Image deleted successfully.',
     },
     confirm: {
       deleteTitle: 'Delete product?',
       deleteMessage: 'This action cannot be undone.',
+    },
+    errors: {
+      invalidImageType: 'Invalid file format. Please use JPEG, PNG, or WebP files.',
+      imageTooLarge: 'File size is too large (maximum 2MB)',
+      imageUploadRequiresProduct: 'Please create the product before uploading an image.',
+      imageLoadError: 'Unable to load image',
+      imageUploadFailed: 'Image upload failed. Please try again.',
+      imageDeleteFailed: 'Image deletion failed. Please try again.',
     },
   },
   stock: {
