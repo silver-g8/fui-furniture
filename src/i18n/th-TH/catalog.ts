@@ -15,6 +15,11 @@ export default {
       edit: 'แก้ไข',
       create: 'สร้าง',
     },
+    actions: {
+      save: 'บันทึก',
+      cancel: 'ยกเลิก',
+      delete: 'ลบ',
+    },
     messages: {
       confirmDelete: 'ยืนยันการลบ',
       savedSuccessfully: 'บันทึกเรียบร้อย',
@@ -181,6 +186,9 @@ export default {
   categories: {
     title: 'หมวดหมู่สินค้า',
     subtitle: 'จัดการโครงสร้างหมวดหมู่',
+    empty: {
+      message: 'ยังไม่มีหมวดหมู่ กรุณาเพิ่มหมวดหมู่หลักเพื่อเริ่มต้น',
+    },
     detail: {
       title: 'เลือกหมวดหมู่เพื่อดูรายละเอียด',
       parent: 'หมวดหมู่แม่',
@@ -189,12 +197,35 @@ export default {
     },
     actions: {
       refresh: 'รีเฟรช',
-      addChild: 'เพิ่มหมวดย่อย (TODO)',
-      edit: 'แก้ไข (TODO)',
-      delete: 'ลบ (TODO)',
+      addRoot: 'เพิ่มหมวดหมู่หลัก',
+      addChild: 'เพิ่มหมวดย่อย',
+      edit: 'แก้ไข',
+      delete: 'ลบ',
+    },
+    form: {
+      createTitle: 'สร้างหมวดหมู่',
+      editTitle: 'แก้ไขหมวดหมู่',
+      fields: {
+        name: 'ชื่อหมวดหมู่',
+        slug: 'Slug',
+        slugHint: 'เว้นว่างไว้เพื่อสร้างอัตโนมัติ',
+        parent: 'หมวดหมู่แม่',
+        noParent: 'ไม่มี (หมวดหมู่หลัก)',
+        isActive: 'เปิดใช้งาน',
+      },
     },
     notify: {
       loadError: 'ไม่สามารถโหลดหมวดหมู่ได้ กรุณาลองใหม่',
+      createSuccess: 'สร้างหมวดหมู่เรียบร้อย',
+      updateSuccess: 'อัปเดตหมวดหมู่เรียบร้อย',
+      deleteSuccess: 'ลบหมวดหมู่เรียบร้อย',
+      deleteError: 'ไม่สามารถลบหมวดหมู่ได้',
+      error: 'เกิดข้อผิดพลาด กรุณาลองใหม่',
+    },
+    dialog: {
+      deleteTitle: 'ยืนยันการลบ',
+      deleteConfirm: 'คุณต้องการลบหมวดหมู่ "{name}" หรือไม่?',
+      deleteWarning: 'ไม่สามารถลบได้หากหมวดหมู่นี้มีหมวดย่อยหรือสินค้าอยู่',
     },
   },
 };

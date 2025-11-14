@@ -1,4 +1,11 @@
-import type { ApiItemResponse, ApiListResponse, CategoryNode, ListParams } from '@/types/catalog';
+import type {
+  ApiItemResponse,
+  ApiListResponse,
+  CategoryCreatePayload,
+  CategoryNode,
+  CategoryUpdatePayload,
+  ListParams,
+} from '@/types/catalog';
 import { catalogApi, mapPaginationMeta } from './api';
 
 const CATEGORY_ENDPOINT = '/categories';
@@ -8,7 +15,9 @@ interface CategoryNodeDto {
   name: string;
   slug: string;
   parent_id?: number | null;
-  is_active: boolean;
+  parentId?: number | null; // Backend may return camelCase
+  is_active?: boolean; // Backend may return snake_case
+  isActive?: boolean; // Backend may return camelCase
   depth?: number;
   children?: CategoryNodeDto[];
 }
@@ -60,18 +69,38 @@ const mapCategory = (dto: CategoryNodeDto): CategoryNode => ({
   id: dto.id,
   name: dto.name,
   slug: dto.slug,
-  parentId: dto.parent_id ?? null,
-  isActive: dto.is_active,
+  parentId: dto.parentId ?? dto.parent_id ?? null,
+  isActive: dto.isActive ?? dto.is_active ?? true,
   ...(dto.depth !== undefined ? { depth: dto.depth } : {}),
   children: Array.isArray(dto.children) ? dto.children.map(mapCategory) : [],
 });
 
 export const fetchCategoryTree = async (): Promise<CategoryNode[]> => {
-  const { data } = await catalogApi.get<ApiItemResponse<CategoryNodeDto[]>>(CATEGORY_ENDPOINT, {
-    params: { tree: 1 },
-  });
+  const response = await catalogApi.get<CategoryNodeDto[] | ApiItemResponse<CategoryNodeDto[]>>(
+    CATEGORY_ENDPOINT,
+    {
+      params: { tree: 1 },
+    },
+  );
 
-  return Array.isArray(data.data) ? data.data.map(mapCategory) : [];
+  // Backend may return array directly or wrapped in { data: [...] }
+  // Axios response.data is the actual response body
+  let items: CategoryNodeDto[] = [];
+
+  if (Array.isArray(response.data)) {
+    // Backend returns array directly
+    items = response.data;
+  } else if (
+    response.data &&
+    typeof response.data === 'object' &&
+    'data' in response.data &&
+    Array.isArray(response.data.data)
+  ) {
+    // Backend returns wrapped in { data: [...] }
+    items = response.data.data;
+  }
+
+  return items.map(mapCategory);
 };
 
 export const fetchCategoryList = async (params: ListParams = {}): Promise<ApiListResponse<CategoryNode>> => {
@@ -98,4 +127,24 @@ export const fetchCategoryList = async (params: ListParams = {}): Promise<ApiLis
     data: items.map(mapCategory),
     meta,
   };
+};
+
+export const createCategory = async (payload: CategoryCreatePayload): Promise<CategoryNode> => {
+  const { data } = await catalogApi.post<ApiItemResponse<CategoryNodeDto>>(CATEGORY_ENDPOINT, payload);
+  return mapCategory(data.data);
+};
+
+export const updateCategory = async (
+  id: number,
+  payload: CategoryUpdatePayload,
+): Promise<CategoryNode> => {
+  const { data } = await catalogApi.put<ApiItemResponse<CategoryNodeDto>>(
+    `${CATEGORY_ENDPOINT}/${id}`,
+    payload,
+  );
+  return mapCategory(data.data);
+};
+
+export const deleteCategory = async (id: number): Promise<void> => {
+  await catalogApi.delete(`${CATEGORY_ENDPOINT}/${id}`);
 };

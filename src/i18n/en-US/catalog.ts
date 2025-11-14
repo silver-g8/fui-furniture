@@ -15,6 +15,11 @@ export default {
       edit: 'Edit',
       create: 'Create',
     },
+    actions: {
+      save: 'Save',
+      cancel: 'Cancel',
+      delete: 'Delete',
+    },
     messages: {
       confirmDelete: 'Confirm deletion',
       savedSuccessfully: 'Saved successfully',
@@ -181,6 +186,9 @@ export default {
   categories: {
     title: 'Product categories',
     subtitle: 'Manage category hierarchy',
+    empty: {
+      message: 'No categories yet. Please add a root category to get started.',
+    },
     detail: {
       title: 'Select a category to view details',
       parent: 'Parent category',
@@ -189,12 +197,35 @@ export default {
     },
     actions: {
       refresh: 'Refresh',
-      addChild: 'Add child (TODO)',
-      edit: 'Edit (TODO)',
-      delete: 'Delete (TODO)',
+      addRoot: 'Add Root Category',
+      addChild: 'Add Child',
+      edit: 'Edit',
+      delete: 'Delete',
+    },
+    form: {
+      createTitle: 'Create Category',
+      editTitle: 'Edit Category',
+      fields: {
+        name: 'Category Name',
+        slug: 'Slug',
+        slugHint: 'Leave empty to auto-generate',
+        parent: 'Parent Category',
+        noParent: 'None (Root Category)',
+        isActive: 'Is Active',
+      },
     },
     notify: {
       loadError: 'Unable to load categories. Please try again.',
+      createSuccess: 'Category created successfully',
+      updateSuccess: 'Category updated successfully',
+      deleteSuccess: 'Category deleted successfully',
+      deleteError: 'Unable to delete category',
+      error: 'An error occurred. Please try again.',
+    },
+    dialog: {
+      deleteTitle: 'Confirm Deletion',
+      deleteConfirm: 'Are you sure you want to delete category "{name}"?',
+      deleteWarning: 'Cannot delete if this category has children or products',
     },
   },
 };

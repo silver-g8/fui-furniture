@@ -107,3 +107,19 @@ export interface ApiItemResponse<T> {
   data: T;
 }
 
+export interface CategoryCreatePayload {
+  name: string;
+  slug?: string;
+  parent_id?: number | null;
+  is_active: boolean;
+  description?: string;
+}
+
+export interface CategoryUpdatePayload {
+  name?: string;
+  slug?: string;
+  parent_id?: number | null;
+  is_active?: boolean;
+  description?: string;
+}
+

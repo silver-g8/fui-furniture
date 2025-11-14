@@ -2,6 +2,7 @@
 import dashboard from './dashboard';
 import catalog from './catalog';
 import auth from './auth';
+import common from './common';
 
 export default {
   failed: 'Action failed',
@@ -10,4 +11,5 @@ export default {
   dashboard,
   catalog,
   auth,
+  common,
 };

@@ -1,6 +1,15 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import type { CategoryNode } from '@/types/catalog';
-import { fetchCategoryTree } from '@/services/catalog/category.service';
+import type {
+  CategoryCreatePayload,
+  CategoryNode,
+  CategoryUpdatePayload,
+} from '@/types/catalog';
+import {
+  createCategory as createCategoryService,
+  deleteCategory as deleteCategoryService,
+  fetchCategoryTree,
+  updateCategory as updateCategoryService,
+} from '@/services/catalog/category.service';
 
 interface CategoryState {
   tree: CategoryNode[];
@@ -45,6 +54,89 @@ export const useCategoryStore = defineStore('catalog-categories', {
       } catch (error) {
         this.tree = [];
         this.error = error instanceof Error ? error.message : 'Failed to load categories';
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    findById(id: number): CategoryNode | null {
+      const findNode = (nodes: CategoryNode[], targetId: number): CategoryNode | null => {
+        for (const node of nodes) {
+          if (node.id === targetId) {
+            return node;
+          }
+          const found = findNode(node.children ?? [], targetId);
+          if (found) {
+            return found;
+          }
+        }
+        return null;
+      };
+      return findNode(this.tree, id);
+    },
+
+    getParentName(id: number): string {
+      const node = this.findById(id);
+      if (!node?.parentId) {
+        return '';
+      }
+      const parent = this.findById(node.parentId);
+      return parent?.name ?? '';
+    },
+
+    async createCategory(payload: CategoryCreatePayload): Promise<CategoryNode> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const category = await createCategoryService(payload);
+        await this.loadTree();
+        return category;
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : 'Failed to create category';
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async updateCategory(id: number, payload: CategoryUpdatePayload): Promise<CategoryNode> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const category = await updateCategoryService(id, payload);
+        await this.loadTree();
+        // Update selected if it matches the updated category
+        if (this.selected?.id === id) {
+          const updated = this.findById(id);
+          if (updated) {
+            this.setSelected(updated);
+          }
+        }
+        return category;
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : 'Failed to update category';
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async deleteCategory(id: number): Promise<void> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        await deleteCategoryService(id);
+        // Clear selection if deleted node was selected
+        if (this.selected?.id === id) {
+          this.setSelected(null);
+        }
+        await this.loadTree();
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : 'Failed to delete category';
         throw error;
       } finally {
         this.loading = false;

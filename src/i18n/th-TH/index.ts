@@ -2,6 +2,7 @@
 import dashboard from './dashboard';
 import catalog from './catalog';
 import auth from './auth';
+import common from './common';
 
 export default {
   failed: 'à¹„à¸¡à¹ˆà¸ªà¸³à¹€à¸£à¹‡à¸ˆ',
@@ -10,4 +11,5 @@ export default {
   dashboard,
   catalog,
   auth,
+  common,
 };
