@@ -10,6 +10,7 @@ export default {
     buttons: {
       save: 'Save',
       cancel: 'Cancel',
+      close: 'Close',
       delete: 'Delete',
       edit: 'Edit',
       create: 'Create',

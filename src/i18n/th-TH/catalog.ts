@@ -10,6 +10,7 @@ export default {
     buttons: {
       save: 'บันทึก',
       cancel: 'ยกเลิก',
+      close: 'ปิด',
       delete: 'ลบ',
       edit: 'แก้ไข',
       create: 'สร้าง',

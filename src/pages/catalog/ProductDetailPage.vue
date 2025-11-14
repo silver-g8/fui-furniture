@@ -3,7 +3,9 @@
     <q-card flat bordered>
       <q-card-section class="row items-center justify-between">
         <div>
-          <div class="text-h5 q-mb-xs">{{ product?.name ?? t('catalog.products.detailTitle') }}</div>
+          <div class="text-h5 q-mb-xs">
+            {{ product?.name ?? t('catalog.products.detailTitle') }}
+          </div>
           <q-badge v-if="product" :color="statusColor(product.status)">
             {{ statusLabel(product.status) }}
           </q-badge>
@@ -16,7 +18,13 @@
             :label="t('catalog.products.actions.edit')"
             @click="goToEdit"
           />
-          <q-btn flat color="primary" icon="arrow_back" :label="t('catalog.products.actions.cancel')" @click="goBack" />
+          <q-btn
+            flat
+            color="primary"
+            icon="arrow_back"
+            :label="t('catalog.products.actions.cancel')"
+            @click="goBack"
+          />
         </div>
       </q-card-section>
 
@@ -43,17 +51,43 @@
             <div v-else class="row q-col-gutter-md">
               <div class="col-12 col-md-6">
                 <div class="q-mb-md">
-                  <q-img
-                    v-if="product.imageUrl"
-                    :src="product.imageUrl"
-                    class="product-detail-image"
-                    ratio="4/3"
-                    :alt="product.name"
-                    spinner-color="primary"
-                  />
+                  <div class="text-subtitle2 q-mb-sm text-grey-7">
+                    {{ t('catalog.products.table.imageUrl') }}
+                  </div>
+                  <div
+                    v-if="product.imageUrl && product.imageUrl.trim()"
+                    class="product-detail-image-container"
+                  >
+                    <q-img
+                      :src="product.imageUrl"
+                      class="product-detail-image cursor-pointer"
+                      ratio="4/3"
+                      :alt="product.name"
+                      spinner-color="primary"
+                      fit="contain"
+                      @click="openImageDialogFromDetail"
+                      data-test="product-image-thumb"
+                    >
+                      <template v-slot:error>
+                        <div class="absolute-full flex flex-center bg-negative text-white">
+                          <div class="text-center">
+                            <q-icon name="broken_image" size="48px" class="q-mb-sm" />
+                            <div>{{ t('catalog.products.errors.imageLoadError') }}</div>
+                            <div class="text-caption q-mt-sm">{{ product.imageUrl }}</div>
+                          </div>
+                        </div>
+                      </template>
+                      <template v-slot:loading>
+                        <div class="absolute-full flex flex-center bg-grey-2">
+                          <q-spinner color="primary" size="48px" />
+                          <div class="text-body2 q-mt-md text-grey-7">กำลังโหลดรูปภาพ...</div>
+                        </div>
+                      </template>
+                    </q-img>
+                  </div>
                   <div v-else class="product-detail-placeholder column items-center justify-center">
-                    <q-icon name="image_not_supported" size="42px" class="text-grey-5 q-mb-sm" />
-                    <span class="text-caption text-grey-6">
+                    <q-icon name="image_not_supported" size="64px" class="text-grey-5 q-mb-sm" />
+                    <span class="text-body2 text-grey-6">
                       {{ t('catalog.products.empty.image') }}
                     </span>
                   </div>
@@ -67,7 +101,9 @@
                   </q-item>
                   <q-item>
                     <q-item-section>
-                      <q-item-label overline>{{ t('catalog.products.fields.category') }}</q-item-label>
+                      <q-item-label overline>{{
+                        t('catalog.products.fields.category')
+                      }}</q-item-label>
                       <q-item-label>{{ product.category?.name ?? '—' }}</q-item-label>
                     </q-item-section>
                   </q-item>
@@ -135,6 +171,78 @@
         </q-tab-panels>
       </q-card-section>
     </q-card>
+
+    <!-- Image Dialog -->
+    <q-dialog v-model="isImageDialogOpen" data-test="product-image-dialog">
+      <q-card style="min-width: 500px; max-width: 800px">
+        <!-- Header: SKU และชื่อสินค้า -->
+        <q-card-section class="product-dialog-header">
+          <div class="text-h6 q-mb-xs">{{ product?.name ?? '' }}</div>
+          <div class="text-body2 text-grey-7">
+            <span class="q-mr-md">
+              <strong>{{ t('catalog.products.fields.sku') }}:</strong> {{ product?.sku ?? '—' }}
+            </span>
+          </div>
+        </q-card-section>
+
+        <q-separator />
+
+        <!-- Middle: รูปภาพ -->
+        <q-card-section class="q-pa-none">
+          <div
+            v-if="selectedImageUrl && selectedImageUrl.trim()"
+            class="product-dialog-image-container"
+          >
+            <q-img
+              :src="selectedImageUrl"
+              ratio="4/3"
+              spinner-color="primary"
+              :alt="product?.name ?? ''"
+              class="product-dialog-image"
+              fit="contain"
+              no-native-menu
+            >
+              <template v-slot:error>
+                <div class="absolute-full flex flex-center bg-negative text-white">
+                  <div class="text-center">
+                    <q-icon name="broken_image" size="48px" class="q-mb-sm" />
+                    <div>{{ t('catalog.products.errors.imageLoadError') }}</div>
+                  </div>
+                </div>
+              </template>
+              <template v-slot:loading>
+                <div class="absolute-full flex flex-center bg-grey-2">
+                  <q-spinner color="primary" size="48px" />
+                  <div class="text-body2 q-mt-md text-grey-7">กำลังโหลดรูปภาพ...</div>
+                </div>
+              </template>
+            </q-img>
+          </div>
+          <div v-else class="product-dialog-placeholder column items-center justify-center">
+            <q-icon name="image_not_supported" size="64px" class="text-grey-5 q-mb-sm" />
+            <span class="text-body2 text-grey-6">
+              {{ t('catalog.products.empty.image') }}
+            </span>
+          </div>
+        </q-card-section>
+
+        <q-separator />
+
+        <!-- Footer: รายละเอียด -->
+        <q-card-section>
+          <div class="text-subtitle1 q-mb-sm">
+            {{ t('catalog.products.fields.description') }}
+          </div>
+          <div class="text-body2" data-test="product-image-description">
+            {{ selectedDescription || t('catalog.products.empty.description') }}
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn v-close-popup :label="t('catalog.common.buttons.close')" color="primary" flat />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -158,6 +266,11 @@ const tab = ref<'overview' | 'stock' | 'activity'>('overview');
 const productId = Number(route.params.id);
 
 const product = computed(() => current.value);
+
+// Image dialog state
+const isImageDialogOpen = ref(false);
+const selectedImageUrl = ref<string | null>(null);
+const selectedDescription = ref<string | null>(null);
 
 const statusLabel = (status: ProductStatus) => t(`catalog.products.status.${status}`);
 const statusColor = (status: ProductStatus) => {
@@ -221,8 +334,7 @@ const load = async () => {
       message: t('catalog.common.loading'),
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : t('catalog.products.notify.loadError');
+    const message = error instanceof Error ? error.message : t('catalog.products.notify.loadError');
     notifyError({ message });
   }
 };
@@ -235,6 +347,19 @@ const goBack = () => {
   router.back();
 };
 
+const openImageDialogFromDetail = () => {
+  if (!product.value?.imageUrl) return;
+  // Trim and validate imageUrl
+  const imageUrl = product.value.imageUrl?.trim();
+  if (imageUrl && imageUrl.length > 0) {
+    selectedImageUrl.value = imageUrl;
+  } else {
+    selectedImageUrl.value = null;
+  }
+  selectedDescription.value = product.value.description ?? '';
+  isImageDialogOpen.value = true;
+};
+
 onMounted(() => {
   void load();
 });
@@ -245,16 +370,56 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.product-detail-image {
+.product-detail-image-container {
+  width: 100%;
+  min-height: 240px;
+  background-color: #fafafa;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   overflow: hidden;
+  padding: 12px 0;
+}
+
+.product-detail-image {
+  width: 100%;
+  min-height: 240px;
+  display: block;
+  object-fit: contain;
+  margin: 0 auto;
 }
 
 .product-detail-placeholder {
-  min-height: 160px;
-  border: 1px dashed #d5d5d5;
+  min-height: 240px;
+  padding: 48px;
+  border: 2px dashed #d5d5d5;
   border-radius: 8px;
   background-color: #f5f5f5;
 }
-</style>
 
+.product-dialog-header {
+  background-color: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.product-dialog-image-container {
+  width: 100%;
+  min-height: 300px;
+  background-color: #fafafa;
+  overflow: hidden;
+}
+
+.product-dialog-image {
+  max-height: 60vh;
+  width: 100%;
+  min-height: 300px;
+  display: block;
+  object-fit: contain;
+}
+
+.product-dialog-placeholder {
+  min-height: 300px;
+  padding: 48px;
+  background-color: #f5f5f5;
+  border-radius: 8px 8px 0 0;
+}
+</style>
