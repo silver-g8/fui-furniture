@@ -50,10 +50,20 @@ const catalogRoutes: RouteRecordRaw[] = [
   },
 ];
 
+const salesRoutes: RouteRecordRaw[] = [
+  {
+    path: 'sales/customers/:id',
+    name: 'sales-customers-detail',
+    component: () => import('pages/sales/CustomerDetailPage.vue'),
+    props: true,
+  },
+];
+
 const seenPaths = new Set<string>([
   'dashboard',
   'auth/login',
   ...catalogRoutes.map((route) => route.path),
+  ...salesRoutes.map((route) => route.path),
 ]);
 
 const buildMenuRoutes = (): RouteRecordRaw[] => {
@@ -123,6 +133,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       ...catalogRoutes.map((route) => ({
+        ...route,
+        meta: {
+          ...(route.meta ?? {}),
+          requiresAuth: true,
+        },
+      })),
+      ...salesRoutes.map((route) => ({
         ...route,
         meta: {
           ...(route.meta ?? {}),

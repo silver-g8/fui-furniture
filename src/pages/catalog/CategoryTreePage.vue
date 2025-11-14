@@ -186,7 +186,7 @@
             <div class="q-gutter-md">
               <q-input
                 v-model="form.name"
-                :label="t('catalog.categories.fields.name')"
+                :label="t('catalog.categories.form.fields.name')"
                 :rules="[(val) => !!val || t('catalog.validation.required')]"
                 :disable="formDialog.loading"
                 dense
@@ -195,8 +195,8 @@
 
               <q-input
                 v-model="form.slug"
-                :label="t('catalog.categories.fields.slug')"
-                :hint="t('catalog.categories.fields.slugHint')"
+                :label="t('catalog.categories.form.fields.slug')"
+                :hint="t('catalog.categories.form.fields.slugHint')"
                 :disable="formDialog.loading"
                 dense
                 outlined
@@ -205,15 +205,15 @@
               <q-input
                 v-if="formDialog.mode === 'create' && formDialog.parentName"
                 :model-value="formDialog.parentName"
-                :label="t('catalog.categories.fields.parent')"
+                :label="t('catalog.categories.form.fields.parent')"
                 :disable="true"
                 dense
                 outlined
               />
               <q-input
                 v-if="formDialog.mode === 'edit'"
-                :model-value="formDialog.parentName || t('catalog.categories.fields.noParent')"
-                :label="t('catalog.categories.fields.parent')"
+                :model-value="formDialog.parentName || t('catalog.categories.form.fields.noParent')"
+                :label="t('catalog.categories.form.fields.parent')"
                 :disable="true"
                 dense
                 outlined
@@ -221,7 +221,7 @@
 
               <q-toggle
                 v-model="form.isActive"
-                :label="t('catalog.categories.fields.isActive')"
+                :label="t('catalog.categories.form.fields.isActive')"
                 :disable="formDialog.loading"
               />
             </div>
