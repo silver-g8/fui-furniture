@@ -24,6 +24,8 @@
         <product-form
           v-model="form"
           :loading="productsSaving || submitting"
+          :category-options="categoryOptions"
+          :brand-options="brandOptions"
           @submit="handleSubmit"
           @cancel="handleCancel"
         />
@@ -42,6 +44,13 @@ import { useNotifier } from '@/composables/useNotifier';
 import { useCrudForm } from '@/composables/useCrudForm';
 import { useLoadingOverlay } from '@/composables/useLoadingOverlay';
 import { useProducts } from '@/composables/useProducts';
+import { fetchCategoryList } from '@/services/catalog/category.service';
+import { fetchBrands } from '@/services/catalog/brand.service';
+
+interface Option {
+  value: number;
+  label: string;
+}
 
 const route = useRoute();
 const router = useRouter();
@@ -58,6 +67,8 @@ const { error: notifyError } = useNotifier();
 const { withLoading } = useLoadingOverlay();
 
 const productId = Number(route.params.id);
+const categoryOptions = ref<Option[]>([]);
+const brandOptions = ref<Option[]>([]);
 const form = ref<ProductPayload>({
   sku: '',
   name: '',
@@ -132,9 +143,35 @@ const goToDetail = () => {
   void router.push({ name: 'catalog-products-detail', params: { id: productId } });
 };
 
+const loadCategoryOptions = async () => {
+  try {
+    const { data } = await fetchCategoryList({ perPage: 100 });
+    categoryOptions.value = data.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }));
+  } catch (error) {
+    console.error('[ProductEditPage] loadCategoryOptions failed', error);
+    notifyError({ message: t('catalog.products.notify.categoryLoadError') });
+  }
+};
+
+const loadBrandOptions = async () => {
+  try {
+    const { data } = await fetchBrands({ perPage: 100 });
+    brandOptions.value = data.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }));
+  } catch (error) {
+    console.error('[ProductEditPage] loadBrandOptions failed', error);
+    notifyError({ message: t('catalog.products.notify.brandLoadError') });
+  }
+};
+
 onMounted(() => {
   void (async () => {
-    await load();
+    await Promise.all([loadCategoryOptions(), loadBrandOptions(), load()]);
     syncFromProduct();
   })();
 });

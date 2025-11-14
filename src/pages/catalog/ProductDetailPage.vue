@@ -129,7 +129,7 @@
 
           <q-tab-panel name="activity">
             <q-banner dense rounded class="bg-grey-1 text-grey-7">
-              {{ t('catalog.products.tabs.activity') }} — TODO
+              {{ t('catalog.products.tabs.activity') }}
             </q-banner>
           </q-tab-panel>
         </q-tab-panels>
@@ -185,7 +185,7 @@ const stockRows = computed(() => product.value?.stockMovements ?? []);
 const stockColumns = computed(() => [
   {
     name: 'createdAt',
-    label: 'Date',
+    label: t('catalog.stock.table.date'),
     field: (row: StockMovement) => new Date(row.createdAt).toLocaleString(),
   },
   {

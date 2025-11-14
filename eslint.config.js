@@ -15,6 +15,7 @@ export default defineConfigWithVueTs(
       '.quasar/',
       '.vscode/',
       '.idea/',
+      'test-results/',
       '*.min.js',
       '*.bundle.js',
       '*.log',

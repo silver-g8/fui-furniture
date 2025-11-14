@@ -7,6 +7,17 @@ export default {
     active: 'Active',
     inactive: 'Inactive',
     loading: 'Loading...',
+    buttons: {
+      save: 'Save',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      edit: 'Edit',
+      create: 'Create',
+    },
+    messages: {
+      confirmDelete: 'Confirm deletion',
+      savedSuccessfully: 'Saved successfully',
+    },
   },
   products: {
     title: 'Products',
@@ -92,6 +103,9 @@ export default {
       reason: 'Reason',
       reference: 'Reference',
       balanceAfter: 'Balance after',
+    },
+    table: {
+      date: 'Date',
     },
     actions: {
       cancel: 'Cancel',

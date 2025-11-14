@@ -11,6 +11,8 @@
         <product-form
           v-model="form"
           :loading="productsSaving || submitting"
+          :category-options="categoryOptions"
+          :brand-options="brandOptions"
           @submit="handleSubmit"
           @cancel="handleCancel"
         />
@@ -20,17 +22,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import ProductForm from '@/components/catalog/ProductForm.vue';
 import type { ProductPayload } from '@/types/catalog';
 import { useCrudForm } from '@/composables/useCrudForm';
 import { useProducts } from '@/composables/useProducts';
+import { fetchCategoryList } from '@/services/catalog/category.service';
+import { fetchBrands } from '@/services/catalog/brand.service';
+
+interface Option {
+  value: number;
+  label: string;
+}
 
 const router = useRouter();
 const { t } = useI18n();
 const { create, saving: productsSaving } = useProducts();
+
+const categoryOptions = ref<Option[]>([]);
+const brandOptions = ref<Option[]>([]);
 
 const form = ref<ProductPayload>({
   sku: '',
@@ -43,6 +55,35 @@ const form = ref<ProductPayload>({
   categoryId: null,
   onHand: 0,
   imageUrl: null,
+});
+
+const loadCategoryOptions = async () => {
+  try {
+    const { data } = await fetchCategoryList({ perPage: 100 });
+    categoryOptions.value = data.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }));
+  } catch (error) {
+    console.error('[ProductCreatePage] loadCategoryOptions failed', error);
+  }
+};
+
+const loadBrandOptions = async () => {
+  try {
+    const { data } = await fetchBrands({ perPage: 100 });
+    brandOptions.value = data.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }));
+  } catch (error) {
+    console.error('[ProductCreatePage] loadBrandOptions failed', error);
+  }
+};
+
+onMounted(() => {
+  void loadCategoryOptions();
+  void loadBrandOptions();
 });
 
 const { execute: submitProduct, loading: submitting } = useCrudForm<ProductPayload, void>({

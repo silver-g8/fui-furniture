@@ -7,6 +7,17 @@ export default {
     active: 'ใช้งาน',
     inactive: 'ปิดใช้งาน',
     loading: 'กำลังโหลด...',
+    buttons: {
+      save: 'บันทึก',
+      cancel: 'ยกเลิก',
+      delete: 'ลบ',
+      edit: 'แก้ไข',
+      create: 'สร้าง',
+    },
+    messages: {
+      confirmDelete: 'ยืนยันการลบ',
+      savedSuccessfully: 'บันทึกเรียบร้อย',
+    },
   },
   products: {
     title: 'สินค้า',
@@ -92,6 +103,9 @@ export default {
       reason: 'เหตุผล',
       reference: 'เลขอ้างอิง',
       balanceAfter: 'ยอดคงเหลือหลังปรับ',
+    },
+    table: {
+      date: 'วันที่',
     },
     actions: {
       cancel: 'ยกเลิก',
