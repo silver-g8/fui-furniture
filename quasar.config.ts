@@ -58,10 +58,10 @@ export default defineConfig((ctx) => {
       // env: {},
       rawDefine: {
         'import.meta.env.VITE_API_BASE_URL': JSON.stringify(
-          process.env.VITE_API_BASE_URL || 'https://imageapi.sg8net.com/api/v1'
+          process.env.VITE_API_BASE_URL || '/api/v1'
         ),
         'import.meta.env.VITE_BACKEND_URL': JSON.stringify(
-          process.env.VITE_BACKEND_URL || 'https://imageapi.sg8net.com'
+          process.env.VITE_BACKEND_URL || ''
         ),
       },
       // ignorePublicFolder: true,
