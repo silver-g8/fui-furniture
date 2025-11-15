@@ -132,6 +132,7 @@ export default {
     },
     empty: {
       warehouseStocks: 'ยังไม่มีข้อมูลสต็อกต่อคลัง',
+      movements: 'ยังไม่มีประวัติการเคลื่อนไหวสต็อก',
     },
     actions: {
       cancel: 'ยกเลิก',

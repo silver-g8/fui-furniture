@@ -132,6 +132,7 @@ export default {
     },
     empty: {
       warehouseStocks: 'No warehouse stock data available',
+      movements: 'No stock movement history available',
     },
     actions: {
       cancel: 'Cancel',
