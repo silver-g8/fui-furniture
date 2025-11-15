@@ -41,6 +41,16 @@
                       <q-item-label>{{ customer.code }}</q-item-label>
                     </q-item-section>
                   </q-item>
+                  <q-item v-if="customer.customer_group">
+                    <q-item-section>
+                      <q-item-label overline>กลุ่มลูกค้า</q-item-label>
+                      <q-item-label>
+                        <q-badge :color="getCustomerGroupColor(customer.customer_group)">
+                          {{ customer.customer_group_label || customer.customer_group }}
+                        </q-badge>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                   <q-item>
                     <q-item-section>
                       <q-item-label overline>ชื่อ</q-item-label>
@@ -71,6 +81,74 @@
                       <q-item-label>{{ customer.notes }}</q-item-label>
                     </q-item-section>
                   </q-item>
+                </q-list>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-list bordered padding>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label overline>ประเภทชำระเงิน</q-item-label>
+                      <q-item-label>
+                        <q-badge
+                          :color="customer.payment_type === 'credit' ? 'primary' : 'positive'"
+                        >
+                          {{ customer.payment_type === 'credit' ? 'เครดิต' : 'เงินสด' }}
+                        </q-badge>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <template v-if="customer.is_credit">
+                    <q-item
+                      v-if="customer.credit_limit !== null && customer.credit_limit !== undefined"
+                    >
+                      <q-item-section>
+                        <q-item-label overline>วงเงินเครดิต</q-item-label>
+                        <q-item-label>{{ formatCurrency(customer.credit_limit) }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <q-item v-if="customer.credit_term_days">
+                      <q-item-section>
+                        <q-item-label overline>จำนวนวันเครดิต</q-item-label>
+                        <q-item-label>{{ customer.credit_term_days }} วัน</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <q-item>
+                      <q-item-section>
+                        <q-item-label overline>ยอดค้างชำระ</q-item-label>
+                        <q-item-label>
+                          <span :class="customer.is_over_credit_limit ? 'text-negative' : ''">
+                            {{ formatCurrency(customer.outstanding_balance) }}
+                          </span>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <q-item v-if="customer.is_over_credit_limit">
+                      <q-item-section>
+                        <q-badge color="negative" class="q-mt-xs">
+                          <q-icon name="warning" class="q-mr-xs" />
+                          เกินวงเงินเครดิต
+                        </q-badge>
+                      </q-item-section>
+                    </q-item>
+                    <q-item
+                      v-else-if="
+                        customer.credit_limit !== null && customer.credit_limit !== undefined
+                      "
+                    >
+                      <q-item-section>
+                        <q-item-label overline>วงเงินคงเหลือ</q-item-label>
+                        <q-item-label>
+                          {{ formatCurrency(customer.credit_limit - customer.outstanding_balance) }}
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <q-item v-if="customer.credit_note">
+                      <q-item-section>
+                        <q-item-label overline>หมายเหตุเครดิต</q-item-label>
+                        <q-item-label>{{ customer.credit_note }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </template>
                 </q-list>
               </div>
             </div>
@@ -190,6 +268,21 @@ const formatCurrency = (value: number) =>
     minimumFractionDigits: 2,
   }).format(value ?? 0);
 
+const getCustomerGroupColor = (
+  group: 'personal' | 'government' | 'organization' | undefined,
+): string => {
+  switch (group) {
+    case 'personal':
+      return 'primary';
+    case 'government':
+      return 'positive';
+    case 'organization':
+      return 'deep-purple';
+    default:
+      return 'grey';
+  }
+};
+
 const loadCustomer = async () => {
   loading.value = true;
   try {
@@ -233,7 +326,7 @@ watch(tab, () => {
     purchasedProducts.value.length === 0 &&
     !purchasesLoading.value
   ) {
-    loadPurchases();
+    void loadPurchases();
   }
 });
 </script>

@@ -7,6 +7,7 @@ import type {
   Product,
   ProductPayload,
   ProductStatus,
+  ProductWarehouseStock,
   StockMovement,
 } from '@/types/catalog';
 import { catalogApi, mapListParamsToQuery, mapPaginationMeta } from './api';
@@ -40,12 +41,50 @@ interface StockMovementDto {
   id: number;
   product_id: number;
   warehouse_id: number;
+  warehouse_name?: string | null;
   quantity: number;
   type: string;
-  balance_after: number;
+  balance_after: number | null;
   reason?: string | null;
   reference?: string | null;
+  reference_type?: string | null;
+  reference_id?: number | null;
   created_at: string;
+}
+
+interface ProductWarehouseStockDto {
+  warehouse_id: number;
+  warehouse_code: string;
+  warehouse_name: string;
+  quantity: number;
+}
+
+interface StockSummaryWarehouseDto {
+  stock_id: number;
+  warehouse_id: number;
+  warehouse: {
+    id: number;
+    code: string;
+    name: string;
+    is_active: boolean;
+  };
+  quantity: number;
+  updated_at: string;
+}
+
+interface StockSummaryResponseDto {
+  product: {
+    id: number;
+    sku: string;
+    name: string;
+  };
+  total_on_hand: number;
+  warehouses: StockSummaryWarehouseDto[];
+  summary: {
+    total_warehouses: number;
+    warehouses_with_stock: number;
+    warehouses_zero_stock: number;
+  };
 }
 
 interface ProductDto {
@@ -55,6 +94,11 @@ interface ProductDto {
   description?: string | null;
   status: ProductStatus;
   price: number;
+  price_tagged?: number | null;
+  price_discounted_tag?: number | null;
+  price_discounted_net?: number | null;
+  price_vat?: number | null;
+  price_vat_credit?: number | null;
   cost?: number | null;
   brand_id?: number | null;
   category_id?: number | null;
@@ -65,6 +109,7 @@ interface ProductDto {
   brand?: BrandDto | null;
   category?: CategoryDto | null;
   stock_movements?: StockMovementDto[];
+  warehouse_stocks?: ProductWarehouseStockDto[];
 }
 
 type PaginationMetaDto = Parameters<typeof mapPaginationMeta>[0];
@@ -118,16 +163,40 @@ const mapCategory = (dto: CategoryDto): CategoryNode => ({
   children: Array.isArray(dto.children) ? dto.children.map(mapCategory) : [],
 });
 
-const mapStockMovement = (dto: StockMovementDto): StockMovement => ({
-  id: dto.id,
-  productId: dto.product_id,
+const mapStockMovement = (dto: StockMovementDto): StockMovement => {
+  const movement: StockMovement = {
+    id: dto.id,
+    productId: dto.product_id,
+    warehouseId: dto.warehouse_id,
+    quantity: dto.quantity,
+    type: dto.type as StockMovement['type'],
+    balanceAfter: dto.balance_after ?? null,
+    reason: dto.reason ?? null,
+    reference: dto.reference ?? null,
+    referenceType: dto.reference_type ?? null,
+    referenceId: dto.reference_id ?? null,
+    createdAt: dto.created_at,
+  };
+  if (dto.warehouse_name !== null && dto.warehouse_name !== undefined) {
+    movement.warehouseName = dto.warehouse_name;
+  }
+  return movement;
+};
+
+const mapProductWarehouseStock = (dto: ProductWarehouseStockDto): ProductWarehouseStock => ({
   warehouseId: dto.warehouse_id,
+  warehouseCode: dto.warehouse_code,
+  warehouseName: dto.warehouse_name,
   quantity: dto.quantity,
-  type: dto.type as StockMovement['type'],
-  balanceAfter: dto.balance_after,
-  reason: dto.reason ?? null,
-  reference: dto.reference ?? null,
-  createdAt: dto.created_at,
+});
+
+const mapStockSummaryWarehouse = (
+  dto: StockSummaryWarehouseDto,
+): ProductWarehouseStock => ({
+  warehouseId: dto.warehouse_id,
+  warehouseCode: dto.warehouse.code,
+  warehouseName: dto.warehouse.name,
+  quantity: dto.quantity,
 });
 
 const mapProduct = (dto: ProductDto | null): Product => {
@@ -139,6 +208,11 @@ const mapProduct = (dto: ProductDto | null): Product => {
     description: dto?.description ?? null,
     status: dto?.status ?? 'draft',
     price: dto?.price ?? 0,
+    priceTagged: dto?.price_tagged ?? null,
+    priceDiscountedTag: dto?.price_discounted_tag ?? null,
+    priceDiscountedNet: dto?.price_discounted_net ?? null,
+    priceVat: dto?.price_vat ?? null,
+    priceVatCredit: dto?.price_vat_credit ?? null,
     cost: dto?.cost ?? null,
     brandId: dto?.brand_id ?? null,
     categoryId: dto?.category_id ?? null,
@@ -153,6 +227,11 @@ const mapProduct = (dto: ProductDto | null): Product => {
   const stockMovements = dto?.stock_movements?.map(mapStockMovement);
   if (stockMovements !== undefined) {
     product.stockMovements = stockMovements;
+  }
+
+  const warehouseStocks = dto?.warehouse_stocks?.map(mapProductWarehouseStock);
+  if (warehouseStocks !== undefined) {
+    product.warehouseStocks = warehouseStocks;
   }
 
   return product;
@@ -170,6 +249,11 @@ const toApiPayload = (payload: ProductPayload) => {
     description: payload.description ?? null,
     status: payload.status,
     price: payload.price,
+    price_tagged: payload.priceTagged ?? null,
+    price_discounted_tag: payload.priceDiscountedTag ?? null,
+    price_discounted_net: payload.priceDiscountedNet ?? null,
+    price_vat: payload.priceVat ?? null,
+    price_vat_credit: payload.priceVatCredit ?? null,
     cost: payload.cost ?? null,
     brand_id: payload.brandId ?? null,
     category_id: payload.categoryId ?? null,
@@ -184,9 +268,7 @@ const mapLegacyPaginationMeta = (payload: ProductListResponseDto): PaginationMet
   last_page: payload.last_page ?? 1,
 });
 
-export const fetchProducts = async (
-  params: ListParams = {},
-): Promise<ApiListResponse<Product>> => {
+export const fetchProducts = async (params: ListParams = {}): Promise<ApiListResponse<Product>> => {
   const { data: payload } = await catalogApi.get<ProductListResponseDto>(PRODUCT_ENDPOINT, {
     params: mapListParamsToQuery(params),
   });
@@ -238,15 +320,11 @@ export const uploadProductImage = async (id: number, file: File): Promise<Produc
   const formData = new FormData();
   formData.append('image', file);
 
-  await catalogApi.post<ProductItemPayload>(
-    `${PRODUCT_ENDPOINT}/${id}/image`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+  await catalogApi.post<ProductItemPayload>(`${PRODUCT_ENDPOINT}/${id}/image`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
     },
-  );
+  });
 
   // The API returns { image_url: string }, so we need to fetch the updated product
   const updatedProduct = await getProduct(id);
@@ -261,4 +339,19 @@ export const uploadProductImage = async (id: number, file: File): Promise<Produc
  */
 export const deleteProductImage = async (id: number): Promise<void> => {
   await catalogApi.delete(`${PRODUCT_ENDPOINT}/${id}/image`);
+};
+
+/**
+ * Get product stock summary by warehouse.
+ *
+ * @param id - Product ID
+ * @returns Promise that resolves to an array of warehouse stocks
+ */
+export const getProductStockSummary = async (
+  id: number,
+): Promise<ProductWarehouseStock[]> => {
+  const { data } = await catalogApi.get<ApiItemResponse<StockSummaryResponseDto>>(
+    `${PRODUCT_ENDPOINT}/${id}/stock-summary`,
+  );
+  return data.data.warehouses.map(mapStockSummaryWarehouse);
 };

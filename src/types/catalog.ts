@@ -22,18 +22,35 @@ export interface CategoryNode {
   children: CategoryNode[];
 }
 
-export type StockMovementType = 'adjust_in' | 'adjust_out' | (string & Record<never, never>);
+export type StockMovementType =
+  | 'goods_receipt_in'
+  | 'sales_order_out'
+  | 'sales_return_in'
+  | 'purchase_return_out'
+  | 'adjust_in'
+  | 'adjust_out'
+  | (string & Record<never, never>);
 
 export interface StockMovement {
   id: number;
   productId: number;
   warehouseId: number;
+  warehouseName?: string;
   quantity: number;
   type: StockMovementType;
-  balanceAfter: number;
+  balanceAfter: number | null;
   reason?: string | null;
   reference?: string | null;
+  referenceType?: string | null;
+  referenceId?: number | null;
   createdAt: string;
+}
+
+export interface ProductWarehouseStock {
+  warehouseId: number;
+  warehouseCode: string;
+  warehouseName: string;
+  quantity: number;
 }
 
 export interface Product {
@@ -43,6 +60,11 @@ export interface Product {
   description?: string | null;
   status: ProductStatus;
   price: number;
+  priceTagged?: number | null;
+  priceDiscountedTag?: number | null;
+  priceDiscountedNet?: number | null;
+  priceVat?: number | null;
+  priceVatCredit?: number | null;
   cost?: number | null;
   brandId?: number | null;
   categoryId?: number | null;
@@ -53,6 +75,7 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
   stockMovements?: StockMovement[];
+  warehouseStocks?: ProductWarehouseStock[];
 }
 
 export interface ProductPayload {
@@ -60,6 +83,11 @@ export interface ProductPayload {
   name: string;
   status: ProductStatus;
   price: number;
+  priceTagged?: number | null;
+  priceDiscountedTag?: number | null;
+  priceDiscountedNet?: number | null;
+  priceVat?: number | null;
+  priceVatCredit?: number | null;
   onHand: number;
   description?: string | null;
   cost?: number | null;
@@ -122,4 +150,3 @@ export interface CategoryUpdatePayload {
   is_active?: boolean;
   description?: string;
 }
-

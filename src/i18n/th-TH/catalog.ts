@@ -56,6 +56,11 @@ export default {
       category: 'หมวดหมู่',
       brand: 'แบรนด์',
       price: 'ราคา',
+      priceTagged: 'ราคาตั้งป้าย',
+      priceDiscountedTag: 'ราคาลดป้าย',
+      priceDiscountedNet: 'ราคาลดสุทธิ',
+      priceVat: 'ราคา vat',
+      priceVatCredit: 'ราคา vat+credit',
       onHand: 'จำนวนคงเหลือ',
       imageUrl: 'ลิงก์รูปภาพ',
       cost: 'ต้นทุน',
@@ -113,22 +118,36 @@ export default {
   },
   stock: {
     adjustTitle: 'ปรับสต็อก — {name}',
+    sections: {
+      warehouseStocks: 'ยอดคงเหลือต่อคลัง',
+      movements: 'ประวัติการเคลื่อนไหวสต็อก',
+    },
     fields: {
       type: 'ประเภทการปรับ',
       quantity: 'จำนวน',
       warehouse: 'คลังสินค้า',
+      warehouseCode: 'รหัสคลัง',
       reason: 'เหตุผล',
       reference: 'เลขอ้างอิง',
       balanceAfter: 'ยอดคงเหลือหลังปรับ',
+      onHand: 'ยอดคงเหลือ',
     },
     table: {
       date: 'วันที่',
+    },
+    empty: {
+      warehouseStocks: 'ยังไม่มีข้อมูลสต็อกต่อคลัง',
+      movements: 'ยังไม่มีประวัติการเคลื่อนไหวสต็อก',
     },
     actions: {
       cancel: 'ยกเลิก',
       submit: 'บันทึกการปรับ',
     },
     types: {
+      goods_receipt_in: 'รับของเข้า',
+      sales_order_out: 'ขายออก',
+      sales_return_in: 'รับคืนจากลูกค้า',
+      purchase_return_out: 'ส่งคืน Supplier',
       adjust_in: 'เพิ่มสต็อก',
       adjust_out: 'ลดสต็อก',
     },
@@ -229,4 +248,3 @@ export default {
     },
   },
 };
-

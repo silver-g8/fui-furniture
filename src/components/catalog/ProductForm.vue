@@ -79,6 +79,71 @@
 
       <div class="col-12 col-md-6">
         <q-input
+          v-model.number="formState.priceTagged"
+          type="number"
+          :label="t('catalog.products.fields.priceTagged')"
+          :disable="loading"
+          outlined
+          dense
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div class="col-12 col-md-6">
+        <q-input
+          v-model.number="formState.priceDiscountedTag"
+          type="number"
+          :label="t('catalog.products.fields.priceDiscountedTag')"
+          :disable="loading"
+          outlined
+          dense
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div class="col-12 col-md-6">
+        <q-input
+          v-model.number="formState.priceDiscountedNet"
+          type="number"
+          :label="t('catalog.products.fields.priceDiscountedNet')"
+          :disable="loading"
+          outlined
+          dense
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div class="col-12 col-md-6">
+        <q-input
+          v-model.number="formState.priceVat"
+          type="number"
+          :label="t('catalog.products.fields.priceVat')"
+          :disable="loading"
+          outlined
+          dense
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div class="col-12 col-md-6">
+        <q-input
+          v-model.number="formState.priceVatCredit"
+          type="number"
+          :label="t('catalog.products.fields.priceVatCredit')"
+          :disable="loading"
+          outlined
+          dense
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div class="col-12 col-md-6">
+        <q-input
           v-model.number="formState.cost"
           type="number"
           :label="t('catalog.products.fields.cost')"
@@ -212,6 +277,11 @@ const defaultState = (): ProductFormState => ({
   description: null,
   status: 'draft',
   price: 0,
+  priceTagged: null,
+  priceDiscountedTag: null,
+  priceDiscountedNet: null,
+  priceVat: null,
+  priceVatCredit: null,
   cost: null,
   brandId: null,
   categoryId: null,
@@ -256,6 +326,11 @@ const formState = reactive<ProductFormState>({
   description: props.modelValue?.description ?? null,
   cost: props.modelValue?.cost ?? null,
   price: props.modelValue?.price ?? 0,
+  priceTagged: props.modelValue?.priceTagged ?? null,
+  priceDiscountedTag: props.modelValue?.priceDiscountedTag ?? null,
+  priceDiscountedNet: props.modelValue?.priceDiscountedNet ?? null,
+  priceVat: props.modelValue?.priceVat ?? null,
+  priceVatCredit: props.modelValue?.priceVatCredit ?? null,
   onHand: props.modelValue?.onHand ?? 0,
   imageUrl: props.modelValue?.imageUrl ?? null,
 });
@@ -290,6 +365,11 @@ watch(
       description: incoming.description ?? null,
       cost: incoming.cost ?? null,
       price: incoming.price ?? 0,
+      priceTagged: incoming.priceTagged ?? null,
+      priceDiscountedTag: incoming.priceDiscountedTag ?? null,
+      priceDiscountedNet: incoming.priceDiscountedNet ?? null,
+      priceVat: incoming.priceVat ?? null,
+      priceVatCredit: incoming.priceVatCredit ?? null,
       onHand: incoming.onHand ?? 0,
       imageUrl: incoming.imageUrl ?? null,
     });
@@ -308,6 +388,52 @@ const syncModel = () => {
     formState.cost !== null && formState.cost !== undefined ? Number(formState.cost) : null;
   const safeCost =
     parsedCost !== null && Number.isFinite(parsedCost) && parsedCost >= 0 ? parsedCost : null;
+  const parsedPriceTagged =
+    formState.priceTagged !== null && formState.priceTagged !== undefined
+      ? Number(formState.priceTagged)
+      : null;
+  const safePriceTagged =
+    parsedPriceTagged !== null && Number.isFinite(parsedPriceTagged) && parsedPriceTagged >= 0
+      ? parsedPriceTagged
+      : null;
+  const parsedPriceDiscountedTag =
+    formState.priceDiscountedTag !== null && formState.priceDiscountedTag !== undefined
+      ? Number(formState.priceDiscountedTag)
+      : null;
+  const safePriceDiscountedTag =
+    parsedPriceDiscountedTag !== null &&
+    Number.isFinite(parsedPriceDiscountedTag) &&
+    parsedPriceDiscountedTag >= 0
+      ? parsedPriceDiscountedTag
+      : null;
+  const parsedPriceDiscountedNet =
+    formState.priceDiscountedNet !== null && formState.priceDiscountedNet !== undefined
+      ? Number(formState.priceDiscountedNet)
+      : null;
+  const safePriceDiscountedNet =
+    parsedPriceDiscountedNet !== null &&
+    Number.isFinite(parsedPriceDiscountedNet) &&
+    parsedPriceDiscountedNet >= 0
+      ? parsedPriceDiscountedNet
+      : null;
+  const parsedPriceVat =
+    formState.priceVat !== null && formState.priceVat !== undefined
+      ? Number(formState.priceVat)
+      : null;
+  const safePriceVat =
+    parsedPriceVat !== null && Number.isFinite(parsedPriceVat) && parsedPriceVat >= 0
+      ? parsedPriceVat
+      : null;
+  const parsedPriceVatCredit =
+    formState.priceVatCredit !== null && formState.priceVatCredit !== undefined
+      ? Number(formState.priceVatCredit)
+      : null;
+  const safePriceVatCredit =
+    parsedPriceVatCredit !== null &&
+    Number.isFinite(parsedPriceVatCredit) &&
+    parsedPriceVatCredit >= 0
+      ? parsedPriceVatCredit
+      : null;
 
   const payload: ProductPayload = {
     sku: formState.sku,
@@ -315,6 +441,11 @@ const syncModel = () => {
     description: formState.description ?? null,
     status: formState.status,
     price: safePrice,
+    priceTagged: safePriceTagged,
+    priceDiscountedTag: safePriceDiscountedTag,
+    priceDiscountedNet: safePriceDiscountedNet,
+    priceVat: safePriceVat,
+    priceVatCredit: safePriceVatCredit,
     cost: safeCost,
     brandId:
       typeof formState.brandId === 'number' && Number.isFinite(formState.brandId)

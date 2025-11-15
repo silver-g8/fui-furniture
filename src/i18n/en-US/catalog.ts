@@ -56,6 +56,11 @@ export default {
       category: 'Category',
       brand: 'Brand',
       price: 'Price',
+      priceTagged: 'Tagged Price',
+      priceDiscountedTag: 'Discounted Tag Price',
+      priceDiscountedNet: 'Discounted Net Price',
+      priceVat: 'VAT Price',
+      priceVatCredit: 'VAT+Credit Price',
       onHand: 'On-hand quantity',
       imageUrl: 'Image URL',
       cost: 'Cost',
@@ -113,22 +118,36 @@ export default {
   },
   stock: {
     adjustTitle: 'Adjust stock — {name}',
+    sections: {
+      warehouseStocks: 'Stock by Warehouse',
+      movements: 'Stock Movement History',
+    },
     fields: {
       type: 'Adjustment type',
       quantity: 'Quantity',
-      warehouse: 'Warehouse ID',
+      warehouse: 'Warehouse',
+      warehouseCode: 'Warehouse Code',
       reason: 'Reason',
       reference: 'Reference',
       balanceAfter: 'Balance after',
+      onHand: 'On Hand',
     },
     table: {
       date: 'Date',
+    },
+    empty: {
+      warehouseStocks: 'No warehouse stock data available',
+      movements: 'No stock movement history available',
     },
     actions: {
       cancel: 'Cancel',
       submit: 'Save adjustment',
     },
     types: {
+      goods_receipt_in: 'Goods Receipt In',
+      sales_order_out: 'Sales Order Out',
+      sales_return_in: 'Sales Return In',
+      purchase_return_out: 'Purchase Return Out',
       adjust_in: 'Adjust in',
       adjust_out: 'Adjust out',
     },
@@ -229,4 +248,3 @@ export default {
     },
   },
 };
-

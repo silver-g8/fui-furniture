@@ -135,34 +135,64 @@
             <q-btn
               dense
               flat
-              icon="visibility"
-              :label="t('catalog.products.actions.view')"
-              @click="viewProduct(props.row.id)"
-            />
-            <q-btn
-              dense
-              flat
-              icon="edit"
-              color="primary"
-              :label="t('catalog.products.actions.edit')"
-              @click="editProduct(props.row.id)"
-            />
-            <q-btn
-              dense
-              flat
-              icon="inventory_2"
-              color="secondary"
-              :label="t('catalog.products.actions.adjust')"
-              @click="openAdjustDialog(props.row)"
-            />
-            <q-btn
-              dense
-              flat
-              icon="delete"
-              color="negative"
-              :label="t('catalog.products.actions.delete')"
-              @click="confirmDelete(props.row)"
-            />
+              round
+              icon="more_vert"
+              color="grey-7"
+            >
+              <q-menu>
+                <q-list style="min-width: 160px">
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="viewProduct(props.row.id)"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="visibility" color="grey-7" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ t('catalog.products.actions.view') }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="editProduct(props.row.id)"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="edit" color="primary" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ t('catalog.products.actions.edit') }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="openAdjustDialog(props.row)"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="inventory_2" color="secondary" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ t('catalog.products.actions.adjust') }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-separator />
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="confirmDelete(props.row)"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="delete" color="negative" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ t('catalog.products.actions.delete') }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
           </q-td>
         </template>
 

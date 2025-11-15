@@ -12,6 +12,15 @@ export interface Customer {
   address?: string;
   is_active: boolean;
   notes?: string;
+  payment_type: 'cash' | 'credit';
+  customer_group?: 'personal' | 'government' | 'organization';
+  customer_group_label?: string;
+  is_credit?: boolean;
+  credit_limit?: number | null;
+  credit_term_days?: number | null;
+  outstanding_balance: number;
+  is_over_credit_limit?: boolean;
+  credit_note?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -35,4 +44,3 @@ export const getCustomerPurchases = async (id: number): Promise<PurchasedProduct
   const response = await salesApi.get<{ data: PurchasedProduct[] }>(`/customers/${id}/purchases`);
   return response.data.data;
 };
-
