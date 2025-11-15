@@ -141,26 +141,55 @@
           </q-tab-panel>
 
           <q-tab-panel name="stock">
-            <div v-if="!product?.stockMovements?.length" class="text-grey-6">
-              {{ t('catalog.products.empty.description') }}
+            <div class="q-mb-md">
+              <div class="text-subtitle2 q-mb-sm text-grey-7">
+                {{ t('catalog.stock.sections.warehouseStocks') }}
+              </div>
+              <q-table
+                v-if="warehouseStockRows.length"
+                dense
+                flat
+                :rows="warehouseStockRows"
+                :columns="warehouseStockColumns"
+                row-key="warehouseId"
+                :rows-per-page-options="[5, 10, 20]"
+                :loading="warehouseStocksLoading"
+              />
+              <div v-else-if="warehouseStocksLoading" class="text-center q-pa-md">
+                <q-spinner size="24px" color="primary" />
+              </div>
+              <div v-else class="text-grey-6">
+                {{ t('catalog.stock.empty.warehouseStocks') }}
+              </div>
             </div>
-            <q-table
-              v-else
-              dense
-              flat
-              :rows="stockRows"
-              :columns="stockColumns"
-              row-key="id"
-              :rows-per-page-options="[5, 10, 20]"
-            >
-              <template #body-cell-type="props">
-                <q-td :props="props">
-                  <q-badge :color="props.value === 'adjust_in' ? 'positive' : 'negative'">
-                    {{ t(`catalog.stock.types.${props.value}`) }}
-                  </q-badge>
-                </q-td>
-              </template>
-            </q-table>
+
+            <q-separator class="q-mb-md" />
+
+            <div>
+              <div class="text-subtitle2 q-mb-sm text-grey-7">
+                {{ t('catalog.stock.sections.movements') }}
+              </div>
+              <div v-if="!stockRows.length" class="text-grey-6">
+                {{ t('catalog.products.empty.description') }}
+              </div>
+              <q-table
+                v-else
+                dense
+                flat
+                :rows="stockRows"
+                :columns="stockColumns"
+                row-key="id"
+                :rows-per-page-options="[5, 10, 20]"
+              >
+                <template #body-cell-type="props">
+                  <q-td :props="props">
+                    <q-badge :color="getMovementTypeColor(props.value)">
+                      {{ t(`catalog.stock.types.${props.value}`) }}
+                    </q-badge>
+                  </q-td>
+                </template>
+              </q-table>
+            </div>
           </q-tab-panel>
 
           <q-tab-panel name="activity">
@@ -247,13 +276,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import type { ProductStatus, StockMovement } from '@/types/catalog';
+import type { ProductStatus, ProductWarehouseStock, StockMovement } from '@/types/catalog';
 import { useNotifier } from '@/composables/useNotifier';
 import { useLoadingOverlay } from '@/composables/useLoadingOverlay';
 import { useProducts } from '@/composables/useProducts';
+import { getProductStockSummary } from '@/services/catalog/product.service';
 
 const route = useRoute();
 const router = useRouter();
@@ -266,6 +296,10 @@ const tab = ref<'overview' | 'stock' | 'activity'>('overview');
 const productId = Number(route.params.id);
 
 const product = computed(() => current.value);
+
+// Warehouse stocks state
+const warehouseStocksData = ref<ProductWarehouseStock[]>([]);
+const warehouseStocksLoading = ref(false);
 
 // Image dialog state
 const isImageDialogOpen = ref(false);
@@ -293,6 +327,26 @@ const formatCurrency = (value: number) =>
     minimumFractionDigits: 2,
   }).format(value ?? 0);
 
+const warehouseStockRows = computed(() => warehouseStocksData.value);
+
+const warehouseStockColumns = computed(() => [
+  {
+    name: 'warehouse',
+    label: t('catalog.stock.fields.warehouse'),
+    field: 'warehouseName',
+  },
+  {
+    name: 'code',
+    label: t('catalog.stock.fields.warehouseCode'),
+    field: 'warehouseCode',
+  },
+  {
+    name: 'quantity',
+    label: t('catalog.stock.fields.onHand'),
+    field: 'quantity',
+  },
+]);
+
 const stockRows = computed(() => product.value?.stockMovements ?? []);
 
 const stockColumns = computed(() => [
@@ -314,12 +368,12 @@ const stockColumns = computed(() => [
   {
     name: 'warehouse',
     label: t('catalog.stock.fields.warehouse'),
-    field: 'warehouseId',
+    field: (row: StockMovement) => row.warehouseName ?? row.warehouseId,
   },
   {
     name: 'balanceAfter',
     label: t('catalog.stock.fields.balanceAfter'),
-    field: 'balanceAfter',
+    field: (row: StockMovement) => row.balanceAfter ?? '—',
   },
   {
     name: 'reason',
@@ -327,6 +381,10 @@ const stockColumns = computed(() => [
     field: (row: StockMovement) => row.reason ?? '—',
   },
 ]);
+
+const getMovementTypeColor = (type: string): 'positive' | 'negative' => {
+  return type.endsWith('_in') ? 'positive' : 'negative';
+};
 
 const load = async () => {
   try {
@@ -338,6 +396,26 @@ const load = async () => {
     notifyError({ message });
   }
 };
+
+const loadWarehouseStocks = async () => {
+  warehouseStocksLoading.value = true;
+  try {
+    warehouseStocksData.value = await getProductStockSummary(productId);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : t('catalog.products.notify.loadError');
+    notifyError({ message });
+    warehouseStocksData.value = [];
+  } finally {
+    warehouseStocksLoading.value = false;
+  }
+};
+
+// Watch tab changes to load warehouse stocks when stock tab is opened
+watch(tab, (newTab) => {
+  if (newTab === 'stock' && productId && !isNaN(productId)) {
+    void loadWarehouseStocks();
+  }
+}, { immediate: true });
 
 const goToEdit = () => {
   void router.push({ name: 'catalog-products-edit', params: { id: productId } });
