@@ -60,6 +60,11 @@ export interface Product {
   description?: string | null;
   status: ProductStatus;
   price: number;
+  priceTagged?: number | null;
+  priceDiscountedTag?: number | null;
+  priceDiscountedNet?: number | null;
+  priceVat?: number | null;
+  priceVatCredit?: number | null;
   cost?: number | null;
   brandId?: number | null;
   categoryId?: number | null;
@@ -78,6 +83,11 @@ export interface ProductPayload {
   name: string;
   status: ProductStatus;
   price: number;
+  priceTagged?: number | null;
+  priceDiscountedTag?: number | null;
+  priceDiscountedNet?: number | null;
+  priceVat?: number | null;
+  priceVatCredit?: number | null;
   onHand: number;
   description?: string | null;
   cost?: number | null;

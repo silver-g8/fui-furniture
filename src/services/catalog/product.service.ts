@@ -94,6 +94,11 @@ interface ProductDto {
   description?: string | null;
   status: ProductStatus;
   price: number;
+  price_tagged?: number | null;
+  price_discounted_tag?: number | null;
+  price_discounted_net?: number | null;
+  price_vat?: number | null;
+  price_vat_credit?: number | null;
   cost?: number | null;
   brand_id?: number | null;
   category_id?: number | null;
@@ -203,6 +208,11 @@ const mapProduct = (dto: ProductDto | null): Product => {
     description: dto?.description ?? null,
     status: dto?.status ?? 'draft',
     price: dto?.price ?? 0,
+    priceTagged: dto?.price_tagged ?? null,
+    priceDiscountedTag: dto?.price_discounted_tag ?? null,
+    priceDiscountedNet: dto?.price_discounted_net ?? null,
+    priceVat: dto?.price_vat ?? null,
+    priceVatCredit: dto?.price_vat_credit ?? null,
     cost: dto?.cost ?? null,
     brandId: dto?.brand_id ?? null,
     categoryId: dto?.category_id ?? null,
@@ -239,6 +249,11 @@ const toApiPayload = (payload: ProductPayload) => {
     description: payload.description ?? null,
     status: payload.status,
     price: payload.price,
+    price_tagged: payload.priceTagged ?? null,
+    price_discounted_tag: payload.priceDiscountedTag ?? null,
+    price_discounted_net: payload.priceDiscountedNet ?? null,
+    price_vat: payload.priceVat ?? null,
+    price_vat_credit: payload.priceVatCredit ?? null,
     cost: payload.cost ?? null,
     brand_id: payload.brandId ?? null,
     category_id: payload.categoryId ?? null,
