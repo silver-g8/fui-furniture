@@ -75,11 +75,26 @@ const salesRoutes: RouteRecordRaw[] = [
   },
 ];
 
+const arRoutes: RouteRecordRaw[] = [
+  {
+    path: 'ar/invoices',
+    name: 'ar-invoices',
+    component: () => import('pages/ar/invoices/InvoiceListPage.vue'),
+  },
+  {
+    path: 'ar/invoices/:id',
+    name: 'ar-invoices-detail',
+    component: () => import('pages/ar/invoices/InvoiceDetailPage.vue'),
+    props: true,
+  },
+];
+
 const seenPaths = new Set<string>([
   'dashboard',
   'auth/login',
   ...catalogRoutes.map((route) => route.path),
   ...salesRoutes.map((route) => route.path),
+  ...arRoutes.map((route) => route.path),
 ]);
 
 const buildMenuRoutes = (): RouteRecordRaw[] => {
@@ -156,6 +171,13 @@ const routes: RouteRecordRaw[] = [
         },
       })),
       ...salesRoutes.map((route) => ({
+        ...route,
+        meta: {
+          ...(route.meta ?? {}),
+          requiresAuth: true,
+        },
+      })),
+      ...arRoutes.map((route) => ({
         ...route,
         meta: {
           ...(route.meta ?? {}),

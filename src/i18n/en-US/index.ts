@@ -1,8 +1,9 @@
-﻿import menu from './menu';
+import menu from './menu';
 import dashboard from './dashboard';
 import catalog from './catalog';
 import auth from './auth';
 import common from './common';
+import ar from './ar';
 
 export default {
   failed: 'Action failed',
@@ -12,4 +13,5 @@ export default {
   catalog,
   auth,
   common,
+  ar,
 };
