@@ -52,6 +52,22 @@ const catalogRoutes: RouteRecordRaw[] = [
 
 const salesRoutes: RouteRecordRaw[] = [
   {
+    path: 'sales/customers',
+    name: 'sales-customers-list',
+    component: () => import('pages/sales/CustomerListPage.vue'),
+  },
+  {
+    path: 'sales/customers/create',
+    name: 'sales-customers-create',
+    component: () => import('pages/sales/CustomerCreatePage.vue'),
+  },
+  {
+    path: 'sales/customers/:id/edit',
+    name: 'sales-customers-edit',
+    component: () => import('pages/sales/CustomerEditPage.vue'),
+    props: true,
+  },
+  {
     path: 'sales/customers/:id',
     name: 'sales-customers-detail',
     component: () => import('pages/sales/CustomerDetailPage.vue'),

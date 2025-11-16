@@ -35,9 +35,71 @@ export interface PurchasedProduct {
   image_url: string | null;
 }
 
+export interface CustomerListParams {
+  search?: string;
+  is_active?: boolean | number;
+  payment_type?: 'cash' | 'credit';
+  customer_group?: 'personal' | 'government' | 'organization';
+  has_outstanding?: boolean;
+  over_credit_limit?: boolean;
+  sort?: string;
+  page?: number;
+  per_page?: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    current_page: number;
+    per_page: number;
+    total: number;
+  };
+}
+
+export type CustomerPayload = {
+  code: string;
+  name: string;
+  email: string;
+  phone: string;
+  address?: string | undefined;
+  is_active?: boolean | undefined;
+  notes?: string | null | undefined;
+  payment_type: 'cash' | 'credit';
+  customer_group?: 'personal' | 'government' | 'organization' | undefined;
+  credit_limit?: number | null | undefined;
+  credit_term_days?: number | null | undefined;
+  credit_note?: string | null | undefined;
+};
+
+export const listCustomers = async (
+  params: CustomerListParams = {},
+): Promise<PaginatedResponse<Customer>> => {
+  const response = await salesApi.get<PaginatedResponse<Customer>>('/customers', {
+    params,
+  });
+  return response.data;
+};
+
 export const getCustomer = async (id: number): Promise<Customer> => {
   const response = await salesApi.get<Customer>(`/customers/${id}`);
   return response.data;
+};
+
+export const createCustomer = async (payload: CustomerPayload): Promise<Customer> => {
+  const response = await salesApi.post<Customer>('/customers', payload);
+  return response.data;
+};
+
+export const updateCustomer = async (
+  id: number,
+  payload: Partial<CustomerPayload>,
+): Promise<Customer> => {
+  const response = await salesApi.put<Customer>(`/customers/${id}`, payload);
+  return response.data;
+};
+
+export const deleteCustomer = async (id: number): Promise<void> => {
+  await salesApi.delete(`/customers/${id}`);
 };
 
 export const getCustomerPurchases = async (id: number): Promise<PurchasedProduct[]> => {

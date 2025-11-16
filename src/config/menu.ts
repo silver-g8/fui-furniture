@@ -75,6 +75,21 @@ export const menuStructure: MenuStructure = [
     ],
   },
   {
+    id: 'sales',
+    label: 'menu.categories.sales',
+    icon: 'point_of_sale',
+    order: 4,
+    items: [
+      {
+        id: 'sales-customers',
+        label: 'menu.items.customers',
+        route: '/sales/customers',
+        icon: 'people',
+        order: 1,
+      },
+    ],
+  },
+  {
     id: 'help',
     label: 'menu.categories.help',
     icon: 'help_outline',
