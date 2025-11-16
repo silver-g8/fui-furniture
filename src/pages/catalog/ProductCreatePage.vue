@@ -49,7 +49,7 @@ const form = ref<ProductPayload>({
   name: '',
   description: null,
   status: 'draft',
-  price: 0,
+  priceTagged: null,
   cost: null,
   brandId: null,
   categoryId: null,
@@ -105,4 +105,3 @@ const handleCancel = () => {
   router.back();
 };
 </script>
-

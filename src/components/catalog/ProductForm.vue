@@ -66,19 +66,6 @@
 
       <div class="col-12 col-md-6">
         <q-input
-          v-model.number="formState.price"
-          type="number"
-          :label="t('catalog.products.fields.price')"
-          :rules="[requiredNumberRule]"
-          :disable="loading"
-          outlined
-          dense
-          min="0"
-        />
-      </div>
-
-      <div class="col-12 col-md-6">
-        <q-input
           v-model.number="formState.priceTagged"
           type="number"
           :label="t('catalog.products.fields.priceTagged')"
@@ -159,8 +146,7 @@
           v-model.number="formState.onHand"
           type="number"
           :label="t('catalog.products.fields.onHand')"
-          :rules="[requiredNumberRule]"
-          :disable="loading"
+          readonly
           outlined
           dense
           min="0"
@@ -276,7 +262,6 @@ const defaultState = (): ProductFormState => ({
   name: '',
   description: null,
   status: 'draft',
-  price: 0,
   priceTagged: null,
   priceDiscountedTag: null,
   priceDiscountedNet: null,
@@ -325,7 +310,6 @@ const formState = reactive<ProductFormState>({
   categoryId: (props.modelValue?.categoryId as number | undefined) ?? null,
   description: props.modelValue?.description ?? null,
   cost: props.modelValue?.cost ?? null,
-  price: props.modelValue?.price ?? 0,
   priceTagged: props.modelValue?.priceTagged ?? null,
   priceDiscountedTag: props.modelValue?.priceDiscountedTag ?? null,
   priceDiscountedNet: props.modelValue?.priceDiscountedNet ?? null,
@@ -346,10 +330,6 @@ const requiredRule = (value: string | number | null | undefined) =>
   (value !== null && value !== undefined && `${value}`.length > 0) ||
   t('catalog.validation.required');
 
-const requiredNumberRule = (value: number | null | undefined) =>
-  (value !== null && value !== undefined && !Number.isNaN(value)) ||
-  t('catalog.validation.required');
-
 watch(
   () => props.modelValue,
   (incoming) => {
@@ -364,7 +344,6 @@ watch(
       categoryId: (incoming.categoryId as number | undefined) ?? null,
       description: incoming.description ?? null,
       cost: incoming.cost ?? null,
-      price: incoming.price ?? 0,
       priceTagged: incoming.priceTagged ?? null,
       priceDiscountedTag: incoming.priceDiscountedTag ?? null,
       priceDiscountedNet: incoming.priceDiscountedNet ?? null,
@@ -382,8 +361,6 @@ const syncModel = () => {
   const parsedOnHand = Number(formState.onHand);
   const safeOnHand =
     Number.isFinite(parsedOnHand) && parsedOnHand >= 0 ? Math.floor(parsedOnHand) : 0;
-  const parsedPrice = Number(formState.price);
-  const safePrice = Number.isFinite(parsedPrice) && parsedPrice >= 0 ? parsedPrice : 0;
   const parsedCost =
     formState.cost !== null && formState.cost !== undefined ? Number(formState.cost) : null;
   const safeCost =
@@ -440,7 +417,6 @@ const syncModel = () => {
     name: formState.name,
     description: formState.description ?? null,
     status: formState.status,
-    price: safePrice,
     priceTagged: safePriceTagged,
     priceDiscountedTag: safePriceDiscountedTag,
     priceDiscountedNet: safePriceDiscountedNet,

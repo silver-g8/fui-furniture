@@ -126,26 +126,16 @@
 
         <template #body-cell-price="props">
           <q-td :props="props">
-            {{ formatCurrency(props.value) }}
+            {{ formatCurrency(props.row.priceTagged ?? 0) }}
           </q-td>
         </template>
 
         <template #body-cell-actions="props">
           <q-td :props="props">
-            <q-btn
-              dense
-              flat
-              round
-              icon="more_vert"
-              color="grey-7"
-            >
+            <q-btn dense flat round icon="more_vert" color="grey-7">
               <q-menu>
                 <q-list style="min-width: 160px">
-                  <q-item
-                    clickable
-                    v-close-popup
-                    @click="viewProduct(props.row.id)"
-                  >
+                  <q-item clickable v-close-popup @click="viewProduct(props.row.id)">
                     <q-item-section avatar>
                       <q-icon name="visibility" color="grey-7" />
                     </q-item-section>
@@ -153,11 +143,7 @@
                       <q-item-label>{{ t('catalog.products.actions.view') }}</q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item
-                    clickable
-                    v-close-popup
-                    @click="editProduct(props.row.id)"
-                  >
+                  <q-item clickable v-close-popup @click="editProduct(props.row.id)">
                     <q-item-section avatar>
                       <q-icon name="edit" color="primary" />
                     </q-item-section>
@@ -165,11 +151,7 @@
                       <q-item-label>{{ t('catalog.products.actions.edit') }}</q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item
-                    clickable
-                    v-close-popup
-                    @click="openAdjustDialog(props.row)"
-                  >
+                  <q-item clickable v-close-popup @click="openAdjustDialog(props.row)">
                     <q-item-section avatar>
                       <q-icon name="inventory_2" color="secondary" />
                     </q-item-section>
@@ -178,11 +160,7 @@
                     </q-item-section>
                   </q-item>
                   <q-separator />
-                  <q-item
-                    clickable
-                    v-close-popup
-                    @click="confirmDelete(props.row)"
-                  >
+                  <q-item clickable v-close-popup @click="confirmDelete(props.row)">
                     <q-item-section avatar>
                       <q-icon name="delete" color="negative" />
                     </q-item-section>
@@ -216,7 +194,8 @@
           <div class="text-h6 q-mb-xs">{{ selectedProduct?.name ?? '' }}</div>
           <div class="text-body2 text-grey-7">
             <span class="q-mr-md">
-              <strong>{{ t('catalog.products.fields.sku') }}:</strong> {{ selectedProduct?.sku ?? '—' }}
+              <strong>{{ t('catalog.products.fields.sku') }}:</strong>
+              {{ selectedProduct?.sku ?? '—' }}
             </span>
           </div>
         </q-card-section>
@@ -225,7 +204,10 @@
 
         <!-- Middle: รูปภาพ -->
         <q-card-section class="q-pa-none">
-          <div v-if="selectedImageUrl && selectedImageUrl.trim()" class="product-dialog-image-container">
+          <div
+            v-if="selectedImageUrl && selectedImageUrl.trim()"
+            class="product-dialog-image-container"
+          >
             <q-img
               :src="selectedImageUrl"
               ratio="4/3"
@@ -272,12 +254,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn
-            v-close-popup
-            :label="t('catalog.common.buttons.close')"
-            color="primary"
-            flat
-          />
+          <q-btn v-close-popup :label="t('catalog.common.buttons.close')" color="primary" flat />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -493,7 +470,8 @@ const columns = computed<QTableProps['columns']>(() => [
   {
     name: 'price',
     label: t('catalog.products.table.price'),
-    field: 'price',
+    // use priceTagged as the main price field for display/sort
+    field: (row: Product) => row.priceTagged ?? 0,
     align: 'right' as const,
     sortable: true,
   },

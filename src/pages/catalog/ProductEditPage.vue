@@ -75,7 +75,11 @@ const form = ref<ProductPayload>({
   name: '',
   description: null,
   status: 'draft',
-  price: 0,
+  priceTagged: null,
+  priceDiscountedTag: null,
+  priceDiscountedNet: null,
+  priceVat: null,
+  priceVatCredit: null,
   cost: null,
   brandId: null,
   categoryId: null,
@@ -93,7 +97,11 @@ const syncFromProduct = () => {
     name: product.name,
     description: product.description ?? null,
     status: product.status,
-    price: product.price,
+    priceTagged: product.priceTagged ?? null,
+    priceDiscountedTag: product.priceDiscountedTag ?? null,
+    priceDiscountedNet: product.priceDiscountedNet ?? null,
+    priceVat: product.priceVat ?? null,
+    priceVatCredit: product.priceVatCredit ?? null,
     cost: product.cost ?? null,
     brandId: product.brandId ?? product.brand?.id ?? null,
     categoryId: product.categoryId ?? product.category?.id ?? null,
@@ -115,8 +123,7 @@ const load = async () => {
       message: t('catalog.common.loading'),
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : t('catalog.products.notify.loadError');
+    const message = error instanceof Error ? error.message : t('catalog.products.notify.loadError');
     notifyError({ message });
   }
 };
@@ -181,4 +188,3 @@ onBeforeUnmount(() => {
   resetCurrent();
 });
 </script>
-

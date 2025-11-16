@@ -59,7 +59,7 @@ export interface Product {
   name: string;
   description?: string | null;
   status: ProductStatus;
-  price: number;
+  // base price field has been removed; priceTagged is the primary price
   priceTagged?: number | null;
   priceDiscountedTag?: number | null;
   priceDiscountedNet?: number | null;
@@ -82,7 +82,7 @@ export interface ProductPayload {
   sku: string;
   name: string;
   status: ProductStatus;
-  price: number;
+  // no direct price field in payload, use priceTagged as main price
   priceTagged?: number | null;
   priceDiscountedTag?: number | null;
   priceDiscountedNet?: number | null;

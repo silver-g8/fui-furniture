@@ -116,7 +116,7 @@
                   <q-item>
                     <q-item-section>
                       <q-item-label overline>{{ t('catalog.products.fields.price') }}</q-item-label>
-                      <q-item-label>{{ formatCurrency(product.price) }}</q-item-label>
+                      <q-item-label>{{ formatCurrency(product.priceTagged ?? 0) }}</q-item-label>
                     </q-item-section>
                   </q-item>
                   <q-item>
@@ -165,37 +165,37 @@
 
             <q-separator class="q-mb-md" />
 
-              <div>
-                <div class="text-subtitle2 q-mb-sm text-grey-7">
-                  {{ t('catalog.stock.sections.movements') }}
-                </div>
-                <q-table
-                  v-if="stockRows.length"
-                  dense
-                  flat
-                  :rows="stockRows"
-                  :columns="stockColumns"
-                  row-key="id"
-                  :rows-per-page-options="[10, 20, 50]"
-                  :loading="stockMovementsLoading"
-                  v-model:pagination="stockMovementsPagination"
-                  @request="onStockMovementsRequest"
-                >
-                  <template #body-cell-type="props">
-                    <q-td :props="props">
-                      <q-badge :color="getMovementTypeColor(props.value)">
-                        {{ t(`catalog.stock.types.${props.value}`) }}
-                      </q-badge>
-                    </q-td>
-                  </template>
-                </q-table>
-                <div v-else-if="stockMovementsLoading" class="text-center q-pa-md">
-                  <q-spinner size="24px" color="primary" />
-                </div>
-                <div v-else class="text-grey-6">
-                  {{ t('catalog.stock.empty.movements') }}
-                </div>
+            <div>
+              <div class="text-subtitle2 q-mb-sm text-grey-7">
+                {{ t('catalog.stock.sections.movements') }}
               </div>
+              <q-table
+                v-if="stockRows.length"
+                dense
+                flat
+                :rows="stockRows"
+                :columns="stockColumns"
+                row-key="id"
+                :rows-per-page-options="[10, 20, 50]"
+                :loading="stockMovementsLoading"
+                v-model:pagination="stockMovementsPagination"
+                @request="onStockMovementsRequest"
+              >
+                <template #body-cell-type="props">
+                  <q-td :props="props">
+                    <q-badge :color="getMovementTypeColor(props.value)">
+                      {{ t(`catalog.stock.types.${props.value}`) }}
+                    </q-badge>
+                  </q-td>
+                </template>
+              </q-table>
+              <div v-else-if="stockMovementsLoading" class="text-center q-pa-md">
+                <q-spinner size="24px" color="primary" />
+              </div>
+              <div v-else class="text-grey-6">
+                {{ t('catalog.stock.empty.movements') }}
+              </div>
+            </div>
           </q-tab-panel>
 
           <q-tab-panel name="activity">
@@ -457,12 +457,16 @@ const onStockMovementsRequest: QTableProps['onRequest'] = ({ pagination }) => {
 };
 
 // Watch tab changes to load warehouse stocks and stock movements when stock tab is opened
-watch(tab, (newTab) => {
-  if (newTab === 'stock' && productId && !isNaN(productId)) {
-    void loadWarehouseStocks();
-    void loadStockMovements();
-  }
-}, { immediate: true });
+watch(
+  tab,
+  (newTab) => {
+    if (newTab === 'stock' && productId && !isNaN(productId)) {
+      void loadWarehouseStocks();
+      void loadStockMovements();
+    }
+  },
+  { immediate: true },
+);
 
 const goToEdit = () => {
   void router.push({ name: 'catalog-products-edit', params: { id: productId } });

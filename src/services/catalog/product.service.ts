@@ -93,7 +93,7 @@ interface ProductDto {
   name: string;
   description?: string | null;
   status: ProductStatus;
-  price: number;
+  // backend no longer exposes a base price; price_tagged is the canonical price
   price_tagged?: number | null;
   price_discounted_tag?: number | null;
   price_discounted_net?: number | null;
@@ -190,9 +190,7 @@ const mapProductWarehouseStock = (dto: ProductWarehouseStockDto): ProductWarehou
   quantity: dto.quantity,
 });
 
-const mapStockSummaryWarehouse = (
-  dto: StockSummaryWarehouseDto,
-): ProductWarehouseStock => ({
+const mapStockSummaryWarehouse = (dto: StockSummaryWarehouseDto): ProductWarehouseStock => ({
   warehouseId: dto.warehouse_id,
   warehouseCode: dto.warehouse.code,
   warehouseName: dto.warehouse.name,
@@ -207,7 +205,6 @@ const mapProduct = (dto: ProductDto | null): Product => {
     name: dto?.name ?? '',
     description: dto?.description ?? null,
     status: dto?.status ?? 'draft',
-    price: dto?.price ?? 0,
     priceTagged: dto?.price_tagged ?? null,
     priceDiscountedTag: dto?.price_discounted_tag ?? null,
     priceDiscountedNet: dto?.price_discounted_net ?? null,
@@ -248,7 +245,6 @@ const toApiPayload = (payload: ProductPayload) => {
     name: payload.name,
     description: payload.description ?? null,
     status: payload.status,
-    price: payload.price,
     price_tagged: payload.priceTagged ?? null,
     price_discounted_tag: payload.priceDiscountedTag ?? null,
     price_discounted_net: payload.priceDiscountedNet ?? null,
@@ -347,9 +343,7 @@ export const deleteProductImage = async (id: number): Promise<void> => {
  * @param id - Product ID
  * @returns Promise that resolves to an array of warehouse stocks
  */
-export const getProductStockSummary = async (
-  id: number,
-): Promise<ProductWarehouseStock[]> => {
+export const getProductStockSummary = async (id: number): Promise<ProductWarehouseStock[]> => {
   const { data } = await catalogApi.get<ApiItemResponse<StockSummaryResponseDto>>(
     `${PRODUCT_ENDPOINT}/${id}/stock-summary`,
   );

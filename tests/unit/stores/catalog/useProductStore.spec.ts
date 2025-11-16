@@ -9,7 +9,8 @@ const mockProduct = (overrides: Partial<Product> = {}): Product => ({
   name: 'Demo Product',
   description: 'Sample',
   status: 'active',
-  price: 1000,
+  // use tagged price as primary price
+  priceTagged: 1000,
   cost: 500,
   brandId: null,
   categoryId: null,
@@ -85,7 +86,7 @@ describe('useProductStore', () => {
       name: 'New Product',
       description: null,
       status: 'draft',
-      price: 500,
+      priceTagged: 500,
       cost: null,
       brandId: null,
       categoryId: null,
@@ -117,7 +118,8 @@ describe('useProductStore', () => {
       name: 'Updated',
       description: existing.description ?? null,
       status: 'inactive',
-      price: existing.price,
+      // ensure we don't pass undefined to priceTagged (ProductPayload expects number | null)
+      priceTagged: existing.priceTagged ?? null,
       cost: existing.cost ?? null,
       brandId: existing.brandId ?? null,
       categoryId: existing.categoryId ?? null,
