@@ -41,7 +41,8 @@ export interface Receipt {
   customer: CustomerRef;
   receipt_no: string;
   receipt_date: string;
-  amount: string;
+  amount?: string; // For backward compatibility
+  total_amount?: string; // Backend sends this field
 
   // Payment details
   payment_method: PaymentMethod;

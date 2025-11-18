@@ -17,7 +17,6 @@
       type="email"
       dense
       outlined
-      :rules="[requiredRule]"
     />
 
     <q-input
@@ -28,7 +27,35 @@
       :rules="[requiredRule]"
     />
 
+    <q-input
+      v-model="localForm.tax_id"
+      label="เลขประจำตัวผู้เสียภาษี"
+      dense
+      outlined
+      hint="สำหรับองค์กร/บริษัท"
+    />
+
     <q-input v-model="localForm.address" label="ที่อยู่" type="textarea" dense outlined autogrow />
+
+    <q-input
+      v-model="localForm.shipping_address"
+      label="ที่อยู่จัดส่ง"
+      type="textarea"
+      dense
+      outlined
+      autogrow
+      hint="ถ้าไม่ระบุจะใช้ที่อยู่หลัก"
+    />
+
+    <q-input
+      v-model="localForm.billing_address"
+      label="ที่อยู่ออกใบกำกับภาษี"
+      type="textarea"
+      dense
+      outlined
+      autogrow
+      hint="ถ้าไม่ระบุจะใช้ที่อยู่หลัก"
+    />
 
     <q-select
       v-model="localForm.payment_type"

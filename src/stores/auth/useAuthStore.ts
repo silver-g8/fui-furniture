@@ -36,13 +36,34 @@ const DEFAULT_SESSION: AuthSession = {
   tokenSource: null,
 };
 
-const toAuthError = (error: unknown, fallback = 'Unexpected error'): AuthError => {
+const toAuthError = (error: unknown, fallbackKey = 'auth.errors.unexpected'): AuthError => {
+  // Default Thai error messages
+  const defaultMessages: Record<string, string> = {
+    'auth.errors.loginFailed': 'ไม่สามารถเข้าสู่ระบบได้ กรุณาตรวจสอบข้อมูลอีกครั้ง',
+    'auth.errors.unauthorized': 'กรุณาเข้าสู่ระบบใหม่',
+    'auth.errors.fetchUserFailed': 'ไม่สามารถโหลดข้อมูลผู้ใช้ได้',
+    'auth.errors.unexpected': 'เกิดข้อผิดพลาดที่ไม่คาดคิด',
+    'auth.errors.networkError': 'เกิดข้อผิดพลาดในการเชื่อมต่อ',
+    'auth.errors.requestFailed': 'คำขอล้มเหลว',
+  };
+  const fallback: string = defaultMessages[fallbackKey] || defaultMessages['auth.errors.unexpected'] || 'เกิดข้อผิดพลาดที่ไม่คาดคิด';
+
   if (error && typeof error === 'object') {
     const candidate = error as Record<string, unknown>;
-    const message =
+    let message =
       typeof candidate.message === 'string' && candidate.message.length > 0
         ? candidate.message
         : fallback;
+    
+    // Check if message is garbled Thai (contains à¸ pattern) and replace with proper Thai
+    if (typeof message === 'string' && (message.includes('à¸') || message.includes('à¹'))) {
+      // Map common garbled messages to proper Thai
+      if (message.includes('à¸­à¸µà¹€à¸¡à¸¥à¸«à¸£à¸·à¸­à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹„à¸¡à¹ˆà¸–à¸¹à¸\x81à¸•à¹‰à¸à¸‡')) {
+        message = 'ไม่สามารถเข้าสู่ระบบได้ กรุณาตรวจสอบข้อมูลอีกครั้ง';
+      } else {
+        message = fallback;
+      }
+    }
 
     const authError: AuthError = { message };
 
@@ -125,7 +146,7 @@ export const useAuthStore = defineStore('auth', {
         persistSession(session);
       } catch (error) {
         this.status = 'error';
-        this.error = toAuthError(error, 'Login failed');
+        this.error = toAuthError(error, 'auth.errors.loginFailed');
         throw error;
       }
     },
@@ -151,7 +172,7 @@ export const useAuthStore = defineStore('auth', {
         persistSession(session);
       } catch (error) {
         this.status = 'error';
-        this.error = toAuthError(error, 'à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹‚à¸«à¸¥à¸”à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¹„à¸”à¹‰');
+        this.error = toAuthError(error, 'auth.errors.fetchUserFailed');
         throw error;
       }
     },

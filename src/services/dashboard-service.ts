@@ -39,7 +39,8 @@ export async function getDashboardData(
 ): Promise<DashboardDataResponse> {
   try {
     const response = await api.get('/dashboard', { params: buildParams(query) });
-    const payload = (response.data?.data as DashboardDataResponse | undefined) ?? response.data;
+    const data = response.data?.data ?? response.data;
+    const payload: unknown = data;
 
     if (!validatePayload(payload)) {
       throw new Error('Invalid dashboard response shape');

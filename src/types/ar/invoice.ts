@@ -62,6 +62,7 @@ export interface Invoice {
   // Status
   status: InvoiceStatus;
   status_label?: string;
+  is_pending_payment?: boolean; // true if from cash sale but payment_method is not cash
 
   // Dates
   issued_at: string | null;
@@ -76,6 +77,7 @@ export interface Invoice {
 
   // Metadata
   note: string | null;
+  payment_method?: string | null; // วิธีชำระเงิน (cash, bank_transfer, cheque, etc.)
   created_at: string;
   updated_at: string;
 }

@@ -65,14 +65,13 @@ const props = withDefaults(
     title: string;
     loading?: boolean;
     error?: string | null;
-    icon?: string | undefined;
+    icon?: string;
     size?: DashboardWidgetSize;
     lastUpdated?: Date | null;
   }>(),
   {
     loading: false,
     error: null,
-    icon: undefined,
     size: 'medium',
     lastUpdated: null,
   },

@@ -1,15 +1,18 @@
 import type { StockAdjustPayload, ApiListResponse, StockMovement, PaginationMeta } from '@/types/catalog';
 import { catalogApi, mapPaginationMeta } from './api';
 
-const STOCK_ENDPOINT = '/api/stock-movements/adjust';
+const STOCK_ENDPOINT_IN = '/stocks/in';
+const STOCK_ENDPOINT_OUT = '/stocks/out';
 const STOCK_MOVEMENTS_ENDPOINT = '/stock-movements';
 
 interface StockAdjustResponseDto {
   data: {
-    movement_id: number;
-    balance_after: number;
-    trace_id?: string;
+    id: number;
+    warehouse_id: number;
+    product_id: number;
+    quantity: number;
   };
+  message: string;
 }
 
 export interface StockAdjustResult {
@@ -19,36 +22,47 @@ export interface StockAdjustResult {
 }
 
 export const adjustStock = async (payload: StockAdjustPayload): Promise<StockAdjustResult> => {
-  const { data } = await catalogApi.post<StockAdjustResponseDto>(STOCK_ENDPOINT, {
+  // Use /stocks/in for adjust_in and /stocks/out for adjust_out
+  const endpoint = payload.type === 'adjust_in' ? STOCK_ENDPOINT_IN : STOCK_ENDPOINT_OUT;
+  
+  const { data } = await catalogApi.post<StockAdjustResponseDto>(endpoint, {
     product_id: payload.productId,
     warehouse_id: payload.warehouseId,
     quantity: payload.quantity,
-    type: payload.type,
-    reason: payload.reason,
-    reference: payload.reference ?? undefined,
+    reason: payload.reason || null,
+    reference: payload.reference || null,
   });
 
-  const traceId = data.data.trace_id;
+  // Get the stock movement ID from the response or fetch it
+  // For now, we'll use the stock ID as movement ID
   return {
-    movementId: data.data.movement_id,
-    balanceAfter: data.data.balance_after,
-    ...(traceId !== undefined ? { traceId } : {}),
+    movementId: data.data.id,
+    balanceAfter: data.data.quantity,
   };
 };
 
 interface StockMovementDto {
   id: number;
-  product_id: number;
-  warehouse_id: number;
+  product_id?: number;
+  warehouse_id?: number;
   warehouse_name?: string | null;
   quantity: number;
   type: string;
-  balance_after: number | null;
+  balance_after?: number | null;
   reason?: string | null;
   reference?: string | null;
   reference_type?: string | null;
   reference_id?: number | null;
   created_at: string;
+  stock?: {
+    product?: {
+      id?: number;
+    };
+    warehouse?: {
+      id?: number;
+      name?: string;
+    };
+  };
 }
 
 interface StockMovementListResponseDto {
@@ -72,6 +86,7 @@ interface StockMovementListParams {
   fromDate?: string;
   toDate?: string;
   search?: string;
+  soId?: number; // Sales Order ID
   page?: number;
   perPage?: number;
 }
@@ -79,8 +94,8 @@ interface StockMovementListParams {
 const mapStockMovement = (dto: StockMovementDto): StockMovement => {
   const movement: StockMovement = {
     id: dto.id,
-    productId: dto.product_id,
-    warehouseId: dto.warehouse_id,
+    productId: dto.product_id ?? dto.stock?.product?.id ?? 0,
+    warehouseId: dto.warehouse_id ?? dto.stock?.warehouse?.id ?? 0,
     quantity: dto.quantity,
     type: dto.type as StockMovement['type'],
     balanceAfter: dto.balance_after ?? null,
@@ -90,8 +105,11 @@ const mapStockMovement = (dto: StockMovementDto): StockMovement => {
     referenceId: dto.reference_id ?? null,
     createdAt: dto.created_at,
   };
+  // Map warehouse_name from response or from stock.warehouse.name
   if (dto.warehouse_name !== null && dto.warehouse_name !== undefined) {
     movement.warehouseName = dto.warehouse_name;
+  } else if (dto.stock?.warehouse?.name) {
+    movement.warehouseName = dto.stock.warehouse.name;
   }
   return movement;
 };
@@ -116,6 +134,9 @@ const mapListParamsToQuery = (params: StockMovementListParams) => {
   }
   if (params.search) {
     query.search = params.search;
+  }
+  if (params.soId !== undefined) {
+    query.so_id = params.soId;
   }
   if (params.page !== undefined) {
     query.page = params.page;

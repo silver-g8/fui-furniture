@@ -50,6 +50,19 @@
               label="สถานะ"
             />
           </div>
+
+          <div class="col-12 col-md-3">
+            <q-select
+              v-model="paymentTypeFilter"
+              :options="paymentTypeOptions"
+              emit-value
+              map-options
+              outlined
+              dense
+              clearable
+              label="ประเภทชำระเงิน"
+            />
+          </div>
         </div>
       </q-card-section>
 
@@ -79,6 +92,32 @@
             <q-badge :color="props.value === 'credit' ? 'primary' : 'positive'">
               {{ props.value === 'credit' ? 'เครดิต' : 'เงินสด' }}
             </q-badge>
+          </q-td>
+        </template>
+
+        <template #body-cell-outstanding_balance="props">
+          <q-td :props="props" class="text-right">
+            <div
+              class="text-weight-medium"
+              :class="{
+                'text-negative': props.row.outstanding_balance > 0,
+                'text-positive': props.row.outstanding_balance === 0,
+              }"
+            >
+              {{ formatCurrency(props.row.outstanding_balance) }}
+            </div>
+            <div
+              v-if="props.row.is_over_credit_limit"
+              class="text-caption text-negative"
+            >
+              เกินวงเงิน
+            </div>
+            <div
+              v-else-if="props.row.is_overdue"
+              class="text-caption text-warning"
+            >
+              เกินกำหนด
+            </div>
           </q-td>
         </template>
 
@@ -145,6 +184,14 @@ import {
 } from '@/services/sales/api';
 import { useNotifier } from '@/composables/useNotifier';
 
+const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat('th-TH', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+};
+
 const router = useRouter();
 const { success: notifySuccess, error: notifyError } = useNotifier();
 
@@ -161,11 +208,18 @@ const tablePagination = ref<QTableProps['pagination']>({
 
 const search = ref('');
 const statusFilter = ref<'all' | 'active' | 'inactive' | null>('all');
+const paymentTypeFilter = ref<'all' | 'credit' | 'cash' | null>('all');
 
 const statusOptions = [
   { label: 'ทั้งหมด', value: 'all' },
   { label: 'ใช้งาน', value: 'active' },
   { label: 'ไม่ใช้งาน', value: 'inactive' },
+];
+
+const paymentTypeOptions = [
+  { label: 'ทั้งหมด', value: 'all' },
+  { label: 'เครดิต', value: 'credit' },
+  { label: 'เงินสด', value: 'cash' },
 ];
 
 const mapFiltersToParams = (): CustomerListParams => {
@@ -178,11 +232,21 @@ const mapFiltersToParams = (): CustomerListParams => {
     is_active = undefined;
   }
 
+  let payment_type: 'cash' | 'credit' | undefined;
+  if (paymentTypeFilter.value === 'credit') {
+    payment_type = 'credit';
+  } else if (paymentTypeFilter.value === 'cash') {
+    payment_type = 'cash';
+  } else {
+    payment_type = undefined;
+  }
+
   const trimmedSearch = search.value?.trim();
 
   return {
     ...(trimmedSearch ? { search: trimmedSearch } : {}),
     ...(is_active !== undefined ? { is_active } : {}),
+    ...(payment_type !== undefined ? { payment_type } : {}),
     page: tablePagination.value?.page ?? 1,
     per_page: tablePagination.value?.rowsPerPage ?? 10,
     sort: 'name',
@@ -219,7 +283,7 @@ const onRequest: QTableProps['onRequest'] = ({ pagination }) => {
   void refresh();
 };
 
-watch([search, statusFilter], () => {
+watch([search, statusFilter, paymentTypeFilter], () => {
   tablePagination.value = {
     ...tablePagination.value,
     page: 1,
@@ -259,6 +323,13 @@ const columns = computed<QTableProps['columns']>(() => [
     label: 'ประเภทชำระเงิน',
     field: 'payment_type',
     align: 'left' as const,
+  },
+  {
+    name: 'outstanding_balance',
+    label: 'ยอดค้างชำระ',
+    field: 'outstanding_balance',
+    align: 'right' as const,
+    sortable: true,
   },
   {
     name: 'is_active',

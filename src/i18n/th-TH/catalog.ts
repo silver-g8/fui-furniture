@@ -144,6 +144,10 @@ export default {
       submit: 'บันทึกการปรับ',
     },
     types: {
+      in: 'รับเข้า',
+      out: 'ส่งออก',
+      reserve: 'จอง',
+      release: 'ปล่อยจอง',
       goods_receipt_in: 'รับของเข้า',
       sales_order_out: 'ขายออก',
       sales_return_in: 'รับคืนจากลูกค้า',

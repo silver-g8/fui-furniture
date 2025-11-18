@@ -73,6 +73,64 @@ const salesRoutes: RouteRecordRaw[] = [
     component: () => import('pages/sales/CustomerDetailPage.vue'),
     props: true,
   },
+  // Quotation routes
+  {
+    path: 'sales/quotations',
+    name: 'sales-quotations-list',
+    component: () => import('pages/sales/quotations/QuotationListPage.vue'),
+  },
+  {
+    path: 'sales/quotations/create',
+    name: 'sales-quotations-create',
+    component: () => import('pages/sales/quotations/QuotationCreatePage.vue'),
+  },
+  {
+    path: 'sales/quotations/:id/edit',
+    name: 'sales-quotations-edit',
+    component: () => import('pages/sales/quotations/QuotationCreatePage.vue'),
+    props: true,
+  },
+  {
+    path: 'sales/quotations/:id',
+    name: 'sales-quotations-detail',
+    component: () => import('pages/sales/quotations/QuotationDetailPage.vue'),
+    props: true,
+  },
+  // Sales Order routes
+  {
+    path: 'sales/sales-orders',
+    name: 'sales-orders-list',
+    component: () => import('pages/sales/sales-orders/SalesOrderListPage.vue'),
+  },
+  {
+    path: 'sales/sales-orders/create',
+    name: 'sales-orders-create',
+    component: () => import('pages/sales/sales-orders/SalesOrderCreatePage.vue'),
+  },
+  {
+    path: 'sales/sales-orders/:id/edit',
+    name: 'sales-orders-edit',
+    component: () => import('pages/sales/sales-orders/SalesOrderCreatePage.vue'),
+    props: true,
+  },
+  {
+    path: 'sales/sales-orders/:id',
+    name: 'sales-orders-detail',
+    component: () => import('pages/sales/sales-orders/SalesOrderDetailPage.vue'),
+    props: true,
+  },
+  // Cash Sale
+  {
+    path: 'sales/cash-sale',
+    name: 'sales-cash-sale',
+    component: () => import('pages/sales/cash-sale/CashSalePage.vue'),
+  },
+  // Sales Reports
+  {
+    path: 'sales/reports',
+    name: 'sales-reports',
+    component: () => import('pages/sales/reports/SalesReportPage.vue'),
+  },
 ];
 
 const arRoutes: RouteRecordRaw[] = [
@@ -86,6 +144,59 @@ const arRoutes: RouteRecordRaw[] = [
     name: 'ar-invoices-detail',
     component: () => import('pages/ar/invoices/InvoiceDetailPage.vue'),
     props: true,
+  },
+  {
+    path: 'ar/receipts',
+    name: 'ar-receipts',
+    component: () => import('pages/ar/receipts/ReceiptListPage.vue'),
+  },
+  {
+    path: 'ar/receipts/:id',
+    name: 'ar-receipts-detail',
+    component: () => import('pages/ar/receipts/ReceiptDetailPage.vue'),
+    props: true,
+  },
+  {
+    path: 'ar/credit-notes',
+    name: 'ar-credit-notes',
+    component: () => import('pages/ar/credit-notes/CreditNoteListPage.vue'),
+  },
+  {
+    path: 'ar/credit-notes/:id',
+    name: 'ar-credit-notes-detail',
+    component: () => import('pages/ar/credit-notes/CreditNoteDetailPage.vue'),
+    props: true,
+  },
+  {
+    path: 'ar/deposits',
+    name: 'ar-deposits',
+    component: () => import('pages/ar/deposits/DepositListPage.vue'),
+  },
+  {
+    path: 'ar/deposits/:id',
+    name: 'ar-deposits-detail',
+    component: () => import('pages/ar/deposits/DepositDetailPage.vue'),
+    props: true,
+  },
+  {
+    path: 'ar/dashboard',
+    name: 'ar-dashboard',
+    component: () => import('pages/ar/ArDashboardPage.vue'),
+  },
+  {
+    path: 'ar/reports/aging',
+    name: 'ar-aging-report',
+    component: () => import('pages/ar/reports/AgingReportPage.vue'),
+  },
+  {
+    path: 'ar/reports/statement',
+    name: 'ar-statement-report',
+    component: () => import('pages/ar/reports/StatementReportPage.vue'),
+  },
+  {
+    path: 'ar/pending-payments',
+    name: 'ar-pending-payments',
+    component: () => import('pages/ar/PendingPaymentPage.vue'),
   },
 ];
 

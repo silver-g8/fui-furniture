@@ -23,7 +23,11 @@
               {{ $t('ar.invoice.detail') }}
             </div>
           </div>
-          <invoice-status-badge :status="invoice.status" size="lg" />
+          <invoice-status-badge 
+            :status="invoice.status" 
+            :is-pending-payment="invoice.is_pending_payment ?? false"
+            size="lg" 
+          />
         </div>
 
         <div class="row q-gutter-sm">
@@ -342,6 +346,7 @@ import { formatCurrency, formatDate } from '@/types/ar/common';
 import { getInvoiceById, issueInvoice, cancelInvoice } from '@/services/ar/invoiceService';
 import { useNotifier } from '@/composables/useNotifier';
 import InvoiceStatusBadge from '@/components/ar/InvoiceStatusBadge.vue';
+import { printHtml, generateInvoiceHtml } from '@/utils/print';
 
 const router = useRouter();
 const route = useRoute();
@@ -482,8 +487,12 @@ const handleSendReminder = () => {
 };
 
 const handlePrint = () => {
-  // TODO: Implement print functionality
-  window.print();
+  if (!invoice.value || !invoice.value.items) return;
+  const html = generateInvoiceHtml({
+    ...invoice.value,
+    items: invoice.value.items,
+  });
+  printHtml(html, `Invoice_${invoice.value.invoice_no}`);
 };
 
 onMounted(() => {

@@ -1,7 +1,7 @@
 <template>
 <DashboardCard
   :title="translatedTitle"
-  :icon="icon"
+  v-bind="icon ? { icon } : {}"
   :size="widget.size"
   :loading="resolvedLoading"
   :error="errorMessage"

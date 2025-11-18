@@ -144,6 +144,10 @@ export default {
       submit: 'Save adjustment',
     },
     types: {
+      in: 'In',
+      out: 'Out',
+      reserve: 'Reserve',
+      release: 'Release',
       goods_receipt_in: 'Goods Receipt In',
       sales_order_out: 'Sales Order Out',
       sales_return_in: 'Sales Return In',

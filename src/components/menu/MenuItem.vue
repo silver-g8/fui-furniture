@@ -128,7 +128,7 @@ const resolveItemElement = (): HTMLElement | null => {
 };
 
 const setItemRef: VNodeRef = (value) => {
-  itemRef.value = value;
+  itemRef.value = value as Element | ComponentPublicInstance | null;
 };
 
 const isActive = computed(() => menuStore.activeMenuItem === props.item.route);

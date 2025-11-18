@@ -32,6 +32,14 @@
             :loading="loading"
             @click="refresh"
           />
+          <q-btn
+            flat
+            color="primary"
+            icon="download"
+            :label="$t('ar.common.export')"
+            :disable="rows.length === 0"
+            @click="handleExport"
+          />
         </div>
       </q-card-section>
 
@@ -111,7 +119,10 @@
         <!-- Status Badge -->
         <template #body-cell-status="props">
           <q-td :props="props">
-            <invoice-status-badge :status="props.row.status" />
+            <invoice-status-badge 
+              :status="props.row.status" 
+              :is-pending-payment="props.row.is_pending_payment ?? false"
+            />
           </q-td>
         </template>
 
@@ -217,6 +228,22 @@
                     </q-item-section>
                   </q-item>
 
+                  <q-separator v-if="canCreateReceiptFromPendingPayment(props.row)" />
+
+                  <q-item
+                    v-if="canCreateReceiptFromPendingPayment(props.row)"
+                    clickable
+                    v-close-popup
+                    @click="handleCreateReceiptFromPendingPayment(props.row)"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="receipt" color="positive" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ $t('ar.invoice.actions.create_receipt_from_pending_payment') }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+
                   <q-separator v-if="canDelete(props.row)" />
 
                   <q-item
@@ -261,7 +288,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { Dialog, type QTableProps } from 'quasar';
 import { useI18n } from 'vue-i18n';
@@ -285,6 +312,7 @@ import {
 import { useNotifier } from '@/composables/useNotifier';
 import InvoiceStatusBadge from '@/components/ar/InvoiceStatusBadge.vue';
 import InvoiceFormDialog from './InvoiceFormDialog.vue';
+import { exportInvoicesToCsv } from '@/utils/export';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -441,6 +469,13 @@ const canEdit = (invoice: Invoice) => canEditInvoice(invoice);
 const canIssue = (invoice: Invoice) => canIssueInvoice(invoice);
 const canCancel = (invoice: Invoice) => canCancelInvoice(invoice);
 const canDelete = (invoice: Invoice) => invoice.status === 'draft';
+const canCreateReceiptFromPendingPayment = (invoice: Invoice) => {
+  return (
+    invoice.is_pending_payment === true &&
+    invoice.status === 'issued' &&
+    parseFloat(invoice.open_amount) > 0
+  );
+};
 
 // Actions
 const viewInvoice = (id: number) => {
@@ -544,6 +579,21 @@ const bulkIssue = () => {
         notifyError({ message });
       }
     })();
+  });
+};
+
+const handleExport = () => {
+  exportInvoicesToCsv(rows.value);
+};
+
+const handleCreateReceiptFromPendingPayment = (invoice: Invoice) => {
+  Dialog.create({
+    component: defineAsyncComponent(() => import('@/components/ar/CreateReceiptFromPendingPaymentDialog.vue')),
+    componentProps: {
+      invoice,
+    },
+  }).onOk(() => {
+    void refresh();
   });
 };
 

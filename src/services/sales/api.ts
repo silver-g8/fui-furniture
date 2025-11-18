@@ -9,7 +9,10 @@ export interface Customer {
   name: string;
   email: string;
   phone: string;
+  tax_id?: string | null;
   address?: string;
+  shipping_address?: string | null;
+  billing_address?: string | null;
   is_active: boolean;
   notes?: string;
   payment_type: 'cash' | 'credit';
@@ -20,6 +23,9 @@ export interface Customer {
   credit_term_days?: number | null;
   outstanding_balance: number;
   is_over_credit_limit?: boolean;
+  is_overdue?: boolean;
+  days_overdue?: number;
+  credit_utilization_percentage?: number;
   credit_note?: string | null;
   created_at: string;
   updated_at: string;
@@ -61,7 +67,10 @@ export type CustomerPayload = {
   name: string;
   email: string;
   phone: string;
+  tax_id?: string | null | undefined;
   address?: string | undefined;
+  shipping_address?: string | null | undefined;
+  billing_address?: string | null | undefined;
   is_active?: boolean | undefined;
   notes?: string | null | undefined;
   payment_type: 'cash' | 'credit';
@@ -105,4 +114,22 @@ export const deleteCustomer = async (id: number): Promise<void> => {
 export const getCustomerPurchases = async (id: number): Promise<PurchasedProduct[]> => {
   const response = await salesApi.get<{ data: PurchasedProduct[] }>(`/customers/${id}/purchases`);
   return response.data.data;
+};
+
+export interface Warehouse {
+  id: number;
+  code: string;
+  name: string;
+  is_active?: boolean;
+}
+
+export const listWarehouses = async (): Promise<Warehouse[]> => {
+  try {
+    const response = await salesApi.get<{ data: Warehouse[] }>('/warehouses');
+    return response.data.data || [];
+  } catch {
+    // ถ้า API ไม่มี ให้ return empty array
+    console.warn('Warehouses API not available, returning empty array');
+    return [];
+  }
 };

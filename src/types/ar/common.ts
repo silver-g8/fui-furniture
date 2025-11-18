@@ -61,7 +61,7 @@ export type RecurringInvoiceStatus = 'active' | 'paused' | 'completed' | 'cancel
 export type CreditHistoryStatus = 'pending' | 'approved' | 'rejected';
 
 // ==================== Payment Method ====================
-export type PaymentMethod = 'cash' | 'bank_transfer' | 'cheque' | 'credit_card' | 'promissory_note';
+export type PaymentMethod = 'cash' | 'bank_transfer' | 'cheque' | 'credit_card' | 'promissory_note' | 'qr_code' | 'online_store';
 
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   cash: 'เงินสด',
@@ -69,6 +69,8 @@ export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   cheque: 'เช็ค',
   credit_card: 'บัตรเครดิต',
   promissory_note: 'ตั๋วเงิน',
+  qr_code: 'QR Code',
+  online_store: 'ร้านค้าออนไลน์',
 };
 
 // ==================== Status Badge Colors ====================

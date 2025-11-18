@@ -437,9 +437,9 @@ const loadStockMovements = async (page = 1) => {
     stockMovementsData.value = data;
     stockMovementsPagination.value = {
       ...stockMovementsPagination.value,
-      page: meta.page,
-      rowsPerPage: meta.perPage,
-      rowsNumber: meta.total,
+      page: meta.page ?? 1,
+      rowsPerPage: meta.perPage ?? 20,
+      rowsNumber: meta.total ?? 0,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : t('catalog.products.notify.loadError');

@@ -46,6 +46,8 @@ export interface ApiErrorPayload {
 const api = axios.create({
   baseURL: apiBaseURL,
   withCredentials: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 });
 
 api.defaults.withCredentials = true;
@@ -60,8 +62,23 @@ const normalizeAxiosError = (error: unknown): ApiErrorPayload => {
 
     if (response) {
       const data = (response.data ?? {}) as Record<string, unknown>;
+      // Handle error message - check if it's garbled Thai text and replace with proper Thai message
+      let errorMessage = (data.message as string) || error.message || 'คำขอล้มเหลว';
+      
+      // Check if message is garbled Thai (contains à¸ pattern)
+      if (errorMessage.includes('à¸') || errorMessage.includes('à¹')) {
+        // Map common garbled messages to proper Thai
+        if (errorMessage.includes('à¸­à¸µà¹€à¸¡à¸¥à¸«à¸£à¸·à¸­à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹„à¸¡à¹ˆà¸–à¸¹à¸\x81à¸•à¹‰à¸à¸‡')) {
+          errorMessage = 'ไม่สามารถเข้าสู่ระบบได้ กรุณาตรวจสอบข้อมูลอีกครั้ง';
+        } else if (response.status === 401) {
+          errorMessage = 'กรุณาเข้าสู่ระบบใหม่';
+        } else {
+          errorMessage = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง';
+        }
+      }
+      
       const payload: ApiErrorPayload = {
-        message: (data.message as string) || error.message || 'Request failed',
+        message: errorMessage,
         status: response.status,
         raw: error,
       };
@@ -83,7 +100,7 @@ const normalizeAxiosError = (error: unknown): ApiErrorPayload => {
     }
 
     const payload: ApiErrorPayload = {
-      message: error.message || 'Network error',
+      message: error.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ',
       raw: error,
     };
 
@@ -95,14 +112,19 @@ const normalizeAxiosError = (error: unknown): ApiErrorPayload => {
   }
 
   if (error instanceof Error) {
+    // Check if error message is garbled Thai
+    let errorMessage = error.message || 'เกิดข้อผิดพลาดที่ไม่คาดคิด';
+    if (errorMessage.includes('à¸') || errorMessage.includes('à¹')) {
+      errorMessage = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง';
+    }
     return {
-      message: error.message || 'Unexpected error',
+      message: errorMessage,
       raw: error,
     };
   }
 
   return {
-    message: 'Unexpected error',
+    message: 'เกิดข้อผิดพลาดที่ไม่คาดคิด',
     raw: error,
   };
 };
@@ -120,7 +142,7 @@ const readTokenFromStores = (): string | null => {
 };
 
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
     try {
       const authStore = useAuthStore();
       const token = authStore.token || readTokenFromStores();
@@ -135,16 +157,64 @@ api.interceptors.request.use(
     }
 
     // ตรวจสอบและส่ง CSRF token จาก cookie
-    if (typeof document !== 'undefined') {
-      const csrfCookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
-      const csrfToken = csrfCookie ? csrfCookie.split('=')[1] : null;
+    // สำหรับ POST, PUT, PATCH, DELETE requests ที่ต้องการ CSRF protection
+    if (typeof document !== 'undefined' && ['post', 'put', 'patch', 'delete'].includes(config.method?.toLowerCase() || '')) {
+      // ข้าม CSRF token สำหรับ CSRF cookie endpoint
+      if (config.url && config.url.includes('/sanctum/csrf-cookie')) {
+        return config;
+      }
+
+      // สร้าง base URL สำหรับ CSRF cookie endpoint
+      let csrfBaseURL = apiBaseURL.replace('/api/v1', '');
+      if (!csrfBaseURL || csrfBaseURL === apiBaseURL || !csrfBaseURL.startsWith('http')) {
+        // ถ้า apiBaseURL ไม่ใช่ full URL ให้ใช้ window.location.origin
+        csrfBaseURL = typeof window !== 'undefined' ? window.location.origin : '';
+      }
+
+      // Refresh CSRF token ก่อนทุก POST/PUT/PATCH/DELETE request เพื่อให้แน่ใจว่า token ยังใช้งานได้
+      let csrfToken = null;
+      try {
+        // Refresh CSRF token
+        await axios.get('/sanctum/csrf-cookie', {
+          withCredentials: true,
+          baseURL: csrfBaseURL,
+        });
+        
+        // รอสักครู่เพื่อให้ cookie ถูก set
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // อ่าน CSRF token ใหม่
+        const csrfCookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
+        csrfToken = csrfCookie ? csrfCookie.split('=')[1] : null;
+        
+        if (!csrfToken) {
+          console.warn('CSRF token not found after refresh for', config.method?.toUpperCase(), config.url);
+        }
+      } catch (error) {
+        console.warn('Failed to refresh CSRF token:', error);
+        // ลองอ่าน CSRF token จาก cookie ที่มีอยู่
+        const csrfCookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
+        csrfToken = csrfCookie ? csrfCookie.split('=')[1] : null;
+      }
 
       if (csrfToken) {
-        // ส่ง CSRF token เป็น header เอง เพราะ Axios อาจจะไม่สามารถอ่าน cookie จาก domain อื่นได้
+        // ส่ง CSRF token เป็น header
         config.headers = config.headers ?? {};
         if (!config.headers['X-XSRF-TOKEN']) {
-          config.headers['X-XSRF-TOKEN'] = decodeURIComponent(csrfToken);
+          // decodeURIComponent เพื่อแปลง URL-encoded token
+          try {
+            const decodedToken = decodeURIComponent(csrfToken);
+            config.headers['X-XSRF-TOKEN'] = decodedToken;
+            // Debug: log CSRF token (first 50 chars only)
+            console.debug('CSRF token set for', config.method?.toUpperCase(), config.url, decodedToken.substring(0, 50) + '...');
+          } catch (error) {
+            console.error('Failed to decode CSRF token:', error);
+            // ถ้า decode ไม่ได้ ให้ใช้ token เดิม
+            config.headers['X-XSRF-TOKEN'] = csrfToken;
+          }
         }
+      } else {
+        console.warn('CSRF token not found for', config.method?.toUpperCase(), config.url);
       }
     }
 
@@ -172,6 +242,13 @@ api.interceptors.response.use(
       window.dispatchEvent(
         new CustomEvent<ApiErrorPayload>(UNAUTHORIZED_EVENT, { detail: normalized }),
       );
+    }
+
+    // สำหรับ 403 (Forbidden) ไม่ต้อง log error ใน console ถ้าเป็น permission issue
+    // แต่ยังคง reject promise เพื่อให้ component จัดการ error ได้
+    if (normalized.status === 403) {
+      // ไม่ log error ใน console เพื่อลด noise
+      // Component สามารถจัดการ error นี้ได้เองผ่าน try-catch
     }
 
     return Promise.reject(toError(normalized));

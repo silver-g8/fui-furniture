@@ -35,15 +35,29 @@
               dense
             />
 
-            <q-input
-              v-model.number="formState.warehouseId"
-              type="number"
+            <q-select
+              v-model="formState.warehouseId"
+              :options="warehouseOptions"
+              option-label="name"
+              option-value="id"
+              emit-value
+              map-options
               :label="t('catalog.stock.fields.warehouse')"
               :rules="[requiredRule]"
               :disable="loading"
+              :loading="warehousesLoading"
               outlined
               dense
-            />
+              clearable
+            >
+              <template #no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    ไม่พบคลังสินค้า
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
 
             <q-input
               v-model="formState.reason"
@@ -81,10 +95,11 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, watch, computed } from 'vue';
+import { reactive, ref, watch, computed, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { QForm } from 'quasar';
 import type { Product, StockAdjustPayload } from '@/types/catalog';
+import { listWarehouses, type Warehouse } from '@/services/sales/api';
 
 const props = defineProps<{
   modelValue: boolean;
@@ -100,6 +115,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const formRef = ref<QForm>();
+const warehouseOptions = ref<Warehouse[]>([]);
+const warehousesLoading = ref(false);
+
 const formState = reactive<StockAdjustPayload>({
   productId: props.product?.id ?? 0,
   warehouseId: 1,
@@ -131,33 +149,80 @@ const requiredQuantity = (value: number | null | undefined) =>
   (value ?? 0) > 0 || t('catalog.validation.quantityPositive');
 
 watch(
-  () => props.product,
-  (product) => {
-    if (!product) {
-      return;
+  () => props.product?.id,
+  (newProductId, oldProductId) => {
+    // Reset form when product changes (only if dialog is open and product actually changed)
+    if (props.modelValue && newProductId && oldProductId && newProductId !== oldProductId) {
+      resetForm(false);
+      // Update productId
+      if (props.product) {
+        formState.productId = props.product.id;
+      }
+    } else if (props.product) {
+      formState.productId = props.product.id;
     }
-    formState.productId = product.id;
   },
   { immediate: true },
 );
 
 watch(
   () => props.modelValue,
-  (open) => {
+  async (open) => {
     if (open) {
-      formState.productId = props.product?.id ?? 0;
+      // Reset form when dialog opens - skip warehouse reset for now
+      resetForm(false);
+      // Wait for next tick to ensure form is reset before loading warehouses
+      await nextTick();
+      // Load warehouses after reset
+      await loadWarehouses();
+      // Set warehouse selection after warehouses are loaded
+      if (warehouseOptions.value.length > 0) {
+        const firstWarehouse = warehouseOptions.value[0];
+        if (firstWarehouse) {
+          formState.warehouseId = firstWarehouse.id;
+        }
+      } else {
+        formState.warehouseId = 1;
+      }
     } else {
       resetForm();
     }
   },
 );
 
-const resetForm = () => {
+onMounted(() => {
+  void loadWarehouses();
+});
+
+const loadWarehouses = async () => {
+  warehousesLoading.value = true;
+  try {
+    warehouseOptions.value = await listWarehouses();
+  } catch (error) {
+    console.error('Failed to load warehouses:', error);
+    warehouseOptions.value = [];
+  } finally {
+    warehousesLoading.value = false;
+  }
+};
+
+const resetForm = (resetWarehouse = true) => {
+  // Reset all form fields to default values
   formState.quantity = 1;
   formState.type = 'adjust_in';
   formState.reason = '';
   formState.reference = '';
-  formState.warehouseId = 1;
+  formState.productId = props.product?.id ?? 0;
+  // Reset warehouse only if requested (skip when we'll set it after loading)
+  if (resetWarehouse) {
+    formState.warehouseId = warehouseOptions.value.length > 0 
+      ? warehouseOptions.value[0]?.id ?? 1 
+      : 1;
+  }
+  // Reset form validation
+  void nextTick(() => {
+    formRef.value?.resetValidation();
+  });
 };
 
 const handleSubmit = async () => {
@@ -172,6 +237,8 @@ const handleSubmit = async () => {
   }
 
   emit('submit', { ...formState });
+  // Reset form after successful submit
+  resetForm();
 };
 
 const handleCancel = () => {

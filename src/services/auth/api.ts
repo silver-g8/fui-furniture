@@ -66,18 +66,25 @@ const buildCsrfCookieUrl = (): string => {
   // ⚠️ Fallback: ถ้า apiBaseURL ไม่ใช่ full URL
   // ใน production ควรตั้งค่า VITE_BACKEND_URL หรือ VITE_API_BASE_URL เป็น full URL
   if (typeof window !== 'undefined' && window.location?.origin) {
-    console.error(
-      '[Auth] ⚠️ CRITICAL: apiBaseURL is not a full URL and VITE_BACKEND_URL is not set!',
-      '\n  CSRF cookie will use Frontend origin (WRONG in production):',
-      window.location.origin,
-      '\n  Please set one of these in .env.production:',
-      '\n    - VITE_BACKEND_URL=https://imageapi.sg8net.com',
-      '\n    - OR VITE_API_BASE_URL=https://imageapi.sg8net.com/api/v1',
-      '\n  Current apiBaseURL:',
-      apiBaseURL,
-    );
+    // ใน development mode ใช้ proxy ดังนั้น relative path เป็นเรื่องปกติ
+    // แสดง error เฉพาะใน production mode
+    const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development';
+    
+    if (!isDevelopment) {
+      console.error(
+        '[Auth] ⚠️ CRITICAL: apiBaseURL is not a full URL and VITE_BACKEND_URL is not set!',
+        '\n  CSRF cookie will use Frontend origin (WRONG in production):',
+        window.location.origin,
+        '\n  Please set one of these in .env.production:',
+        '\n    - VITE_BACKEND_URL=https://imageapi.sg8net.com',
+        '\n    - OR VITE_API_BASE_URL=https://imageapi.sg8net.com/api/v1',
+        '\n  Current apiBaseURL:',
+        apiBaseURL,
+      );
+    }
 
     // ⚠️ ใช้ Frontend origin (ผิดใน production แต่จำเป็นสำหรับ fallback)
+    // ใน development mode ใช้ proxy ดังนั้น relative path เป็นเรื่องปกติ
     return `${window.location.origin}${
       CSRF_COOKIE_ENDPOINT.startsWith('/') ? '' : '/'
     }${CSRF_COOKIE_ENDPOINT}`;

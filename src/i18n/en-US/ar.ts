@@ -63,6 +63,7 @@ export default {
       paid: 'Paid',
       overdue: 'Overdue',
       cancelled: 'Cancelled',
+      pending_payment: 'Pending Payment',
     },
     actions: {
       issue: 'Issue Invoice',
@@ -70,6 +71,7 @@ export default {
       send_reminder: 'Send Reminder',
       view_receipts: 'View Receipts',
       view_credit_notes: 'View Credit Notes',
+      create_receipt_from_pending_payment: 'Create Receipt',
     },
     payment_history: 'Payment History',
     payment_history_description: 'View all payment records for this invoice',
@@ -96,7 +98,10 @@ export default {
       confirm_issue: 'Do you want to issue this invoice?',
       confirm_cancel: 'Do you want to cancel this invoice?',
       confirm_delete: 'Do you want to delete this invoice?',
+      create_receipt_from_pending_payment_description: 'Create a receipt for a pending payment invoice (cash customer with non-cash payment method)',
+      create_receipt_from_pending_payment_success: 'Receipt created successfully',
     },
+    create_receipt_from_pending_payment_error: 'Failed to create receipt',
   },
 
   // Receipt
@@ -116,6 +121,8 @@ export default {
       cheque: 'Cheque',
       credit_card: 'Credit Card',
       promissory_note: 'Promissory Note',
+      qr_code: 'QR Code',
+      online_store: 'Online Store',
     },
     bank_account: 'Bank Account',
     cheque_no: 'Cheque No.',
@@ -143,6 +150,11 @@ export default {
       confirm_post: 'Do you want to post this receipt?',
       confirm_cancel: 'Do you want to cancel this receipt?',
       confirm_delete: 'Do you want to delete this receipt?',
+    },
+    errors: {
+      load_invoices_failed: 'Failed to load invoice list',
+      payment_method_required: 'Please select a payment method',
+      receipt_date_required: 'Please select a receipt date',
     },
   },
 

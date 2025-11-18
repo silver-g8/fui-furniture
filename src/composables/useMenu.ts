@@ -36,7 +36,7 @@ function findPathByRoute(
       }
       const normalized = item.route.replace(/\/+$/, '');
       return normalized === route.replace(/\/+$/, '');
-    });
+    }, []);
 
     if (found) {
       return { category, path: found.path };

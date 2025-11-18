@@ -71,6 +71,28 @@ export const cancelReceipt = async (id: number): Promise<Receipt> => {
 };
 
 /**
+ * Create receipt from pending payment invoice
+ * สำหรับ Invoice ที่เป็น pending payment (cash sale with non-cash payment method)
+ */
+export interface CreateReceiptFromPendingPaymentPayload {
+  payment_method: 'cash' | 'bank_transfer' | 'cheque' | 'credit_card' | 'promissory_note' | 'qr_code' | 'online_store';
+  receipt_date?: string;
+  reference_no?: string | null;
+  note?: string | null;
+}
+
+export const createReceiptFromPendingPayment = async (
+  invoiceId: number,
+  payload: CreateReceiptFromPendingPaymentPayload,
+): Promise<Receipt> => {
+  const response = await api.post<Receipt>(
+    `/ar/invoices/${invoiceId}/create-receipt-from-pending-payment`,
+    payload,
+  );
+  return response.data;
+};
+
+/**
  * ดึงสรุปข้อมูลใบเสร็จ
  */
 export const getReceiptSummary = async (params?: ReceiptQueryParams): Promise<ReceiptSummary> => {

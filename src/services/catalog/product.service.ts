@@ -349,3 +349,36 @@ export const getProductStockSummary = async (id: number): Promise<ProductWarehou
   );
   return data.data.warehouses.map(mapStockSummaryWarehouse);
 };
+
+/**
+ * Get price for a product based on customer and quantity.
+ *
+ * @param productId - Product ID
+ * @param customerId - Customer ID
+ * @param qty - Quantity (default: 1)
+ * @returns Promise that resolves to price information
+ */
+export interface ProductPriceInfo {
+  productId: number;
+  customerId: number;
+  customerGroup: string | null;
+  qty: number;
+  price: number;
+  defaultPrice: number;
+  hasSpecialPrice: boolean;
+  specialPrice: number | null;
+}
+
+export const getProductPrice = async (
+  productId: number,
+  customerId: number,
+  qty: number = 1,
+): Promise<ProductPriceInfo> => {
+  const { data } = await catalogApi.get<ProductPriceInfo>(`${PRODUCT_ENDPOINT}/${productId}/price`, {
+    params: {
+      customer_id: customerId,
+      qty: Number(qty), // Ensure qty is a number, not string
+    },
+  });
+  return data;
+};
